@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Giới thiệu về EduFlow | Nâng tầm tri thức Việt</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(53, 37, 205, 0.9) 0%, rgba(79, 70, 229, 0.7) 100%);
+        }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface-variant": "#464555",
+                        "surface-tint": "#4d44e3",
+                        "surface-container": "#e5eeff",
+                        "outline": "#777587",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#c3c0ff",
+                        "tertiary-container": "#6f3dd9",
+                        "tertiary": "#571ac0",
+                        "on-primary": "#ffffff",
+                        "secondary": "#0058be",
+                        "on-secondary-fixed": "#001a42",
+                        "on-primary-container": "#dad7ff",
+                        "surface": "#f8f9ff",
+                        "inverse-surface": "#213145",
+                        "surface-container-high": "#dce9ff",
+                        "tertiary-fixed": "#e9ddff",
+                        "on-tertiary-container": "#e3d5ff",
+                        "surface-container-low": "#eff4ff",
+                        "outline-variant": "#c7c4d8",
+                        "on-primary-fixed": "#0f0069",
+                        "primary-fixed": "#e2dfff",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#4f46e5",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#23005c",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "on-background": "#0b1c30",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "primary": "#3525cd",
+                        "secondary-container": "#2170e4",
+                        "on-secondary-container": "#fefcff",
+                        "background": "#f8f9ff",
+                        "error": "#ba1a1a",
+                        "on-surface": "#0b1c30",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "surface-variant": "#d3e4fe",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#cbdbf5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "unit": "4px",
+                        "stack-sm": "8px",
+                        "stack-lg": "32px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "display": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "label-md": ["Geist"],
+                        "label-sm": ["Geist"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "label-sm": ["12px", { "lineHeight": "1", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-fixed-dim selection:text-primary">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm">
+<nav class="flex items-center justify-between px-margin-desktop h-16 max-w-container-max mx-auto">
+<div class="flex items-center gap-stack-lg">
+<a class="font-headline-md text-headline-md font-bold text-primary" href="#">EduFlow</a>
+<div class="hidden md:flex items-center gap-gutter">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Browse</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">My Courses</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Instructors</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Resources</a>
+</div>
+</div>
+<div class="flex items-center gap-stack-md">
+<div class="hidden sm:flex items-center gap-stack-sm mr-4">
+<button class="p-2 hover:bg-primary-container/10 rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">shopping_cart</span>
+</button>
+<button class="p-2 hover:bg-primary-container/10 rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+</div>
+<button class="px-5 py-2 font-label-md text-label-md font-semibold text-primary hover:bg-primary-container/10 rounded-lg transition-all active:scale-95">Sign In</button>
+<button class="px-5 py-2 font-label-md text-label-md font-semibold bg-primary text-on-primary rounded-lg shadow-sm hover:brightness-110 transition-all active:scale-95">Get Started</button>
+</div>
+</nav>
+</header>
+<main class="pt-16">
+<!-- Hero Section -->
+<section class="relative h-[819px] min-h-[600px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="A diverse group of motivated young professionals collaborating in a bright, modern glass-walled office space with natural sunlight. They are focused on digital learning tools, representing a high-energy educational environment. The scene is styled with a sleek SaaS aesthetic, dominated by soft indigos and crisp whites, evoking a professional and encouraging flow state." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDFGEgyDJxMW4qUQ42209he163lNbJEwyp8q7BWvhZIuWY5SDp6VmQJjQ_mg8TNV8zW7CspVBqAE92X2yFzpK_lqHf6r06AdmGOv76VqPIQjYkrmkeya2NddDxV2G0rjlKA2wPafmpI_OhZQ0RDFnNSkC9WIzJ5NamqCKvZ2D8ymJDG6CkARE1SoxHTYZ3GLp6F7hcjS875wUAKMKpFtfMrRoaf6ahRZCINfX5Pe4xyu0im2RFRYozw2xy2fgQgzjdahNrr1MsViY"/>
+<div class="absolute inset-0 hero-gradient mix-blend-multiply opacity-90"></div>
+</div>
+<div class="relative z-10 px-margin-desktop max-w-container-max mx-auto w-full text-white">
+<div class="max-w-3xl">
+<span class="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full font-label-sm text-label-sm mb-stack-md uppercase tracking-wider">Chào mừng đến với EduFlow</span>
+<h1 class="font-display text-display mb-stack-md leading-tight">Nâng tầm tri thức Việt qua giáo dục số hiện đại.</h1>
+<p class="font-body-lg text-body-lg text-white/80 mb-stack-lg max-w-2xl">Chúng tôi không chỉ cung cấp các khóa học, chúng tôi xây dựng một cộng đồng học tập không giới hạn, nơi kiến thức được truyền tải một cách chuyên nghiệp và tinh tế nhất.</p>
+<div class="flex flex-wrap gap-stack-md">
+<button class="px-8 py-4 bg-white text-primary font-label-md text-label-md rounded-xl font-bold shadow-xl hover:scale-105 transition-transform">Khám phá ngay</button>
+<button class="px-8 py-4 border border-white/40 backdrop-blur-sm text-white font-label-md text-label-md rounded-xl font-bold hover:bg-white/10 transition-colors">Tìm hiểu thêm</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Section -->
+<section class="relative z-20 -mt-16 px-margin-desktop max-w-container-max mx-auto">
+<div class="glass-card rounded-3xl p-stack-lg shadow-2xl flex flex-wrap justify-around items-center gap-stack-lg text-center">
+<div class="flex flex-col gap-unit">
+<span class="font-display text-display text-primary">100k+</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Học viên tin tưởng</span>
+</div>
+<div class="w-px h-16 bg-outline-variant hidden lg:block"></div>
+<div class="flex flex-col gap-unit">
+<span class="font-display text-display text-primary">500+</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Giảng viên chuyên gia</span>
+</div>
+<div class="w-px h-16 bg-outline-variant hidden lg:block"></div>
+<div class="flex flex-col gap-unit">
+<span class="font-display text-display text-primary">1000+</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Khóa học thực chiến</span>
+</div>
+</div>
+</section>
+<!-- Vision & Mission -->
+<section class="py-24 px-margin-desktop max-w-container-max mx-auto">
+<div class="grid md:grid-cols-2 gap-16 items-center">
+<div class="space-y-stack-md">
+<h2 class="font-headline-lg text-headline-lg text-primary">Tầm nhìn &amp; Sứ mệnh</h2>
+<div class="p-stack-lg bg-surface-container rounded-3xl border border-outline-variant/30">
+<h3 class="font-headline-md text-headline-md mb-stack-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">visibility</span> Tầm nhìn
+                        </h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Trở thành nền tảng giáo dục số hàng đầu Đông Nam Á, nơi mọi cá nhân đều có thể tiếp cận với tri thức tinh hoa từ các chuyên gia hàng đầu một cách dễ dàng và hiệu quả nhất.</p>
+</div>
+<div class="p-stack-lg glass-card rounded-3xl border border-primary/20">
+<h3 class="font-headline-md text-headline-md mb-stack-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">rocket_launch</span> Sứ mệnh
+                        </h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Bình đẳng hóa cơ hội học tập thông qua công nghệ, cung cấp lộ trình học tập cá nhân hóa và hỗ trợ cộng đồng tri thức Việt vươn tầm quốc tế.</p>
+</div>
+</div>
+<div class="relative group">
+<div class="absolute -inset-4 bg-primary/10 rounded-[40px] blur-3xl group-hover:bg-primary/20 transition-all duration-700"></div>
+<img class="relative rounded-[40px] shadow-2xl w-full h-[500px] object-cover transition-transform duration-500 group-hover:scale-[1.02]" data-alt="A professional close-up of a high-resolution tablet and stylus being used by a focused learner to navigate a sleek educational dashboard. The lighting is crisp and cool, featuring an indigo-tinted professional SaaS palette. The composition highlights precision, innovation, and the digital transformation of education, with soft ambient blur in the background to emphasize the interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZUvOzNXPa5Ihz4XyC6GWsR-Tdgnngl5ksYxhxkUt3GKvIBkK0-6FKA-YNzM8DfZTulj3wpvGsaV2cWoJkFdmxsH50aGt3G6xLjOzD7xF7rLlC9XdKUJk2ovD6zLDEdz41BaYYwHfNCxsDO1EkqBj8I5dA4CB0u0tFiTsfbiSaYdPALnlAwGOEggVUSqhCLwMDLOA69tQgNIGHEOB0hUd-qWF5A-znGNU3ToBcd4-O_HNGAgtbP6ZWjNz4a6Q4t4XcKckTo5ng1MI"/>
+</div>
+</div>
+</section>
+<!-- Core Values -->
+<section class="py-24 bg-surface-container-low">
+<div class="px-margin-desktop max-w-container-max mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg mb-stack-sm">Giá trị cốt lõi</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Những nguyên tắc vàng giúp EduFlow xây dựng niềm tin và sự thành công bền vững cùng học viên.</p>
+</div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Value 1 -->
+<div class="p-stack-lg bg-surface-container-lowest rounded-3xl shadow-sm border border-outline-variant hover:border-primary transition-colors group">
+<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-stack-md group-hover:bg-primary group-hover:text-white transition-all">
+<span class="material-symbols-outlined text-4xl">verified</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-stack-sm">Chất lượng</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tất cả bài giảng đều được kiểm duyệt gắt gao về mặt chuyên môn và kỹ thuật sản xuất, đảm bảo trải nghiệm học tập tốt nhất.</p>
+</div>
+<!-- Value 2 -->
+<div class="p-stack-lg bg-surface-container-lowest rounded-3xl shadow-sm border border-outline-variant hover:border-primary transition-colors group">
+<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-stack-md group-hover:bg-primary group-hover:text-white transition-all">
+<span class="material-symbols-outlined text-4xl">lightbulb</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-stack-sm">Sáng tạo</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Chúng tôi không ngừng đổi mới phương pháp giảng dạy và ứng dụng AI để tối ưu hóa lộ trình học tập cá nhân hóa.</p>
+</div>
+<!-- Value 3 -->
+<div class="p-stack-lg bg-surface-container-lowest rounded-3xl shadow-sm border border-outline-variant hover:border-primary transition-colors group">
+<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-stack-md group-hover:bg-primary group-hover:text-white transition-all">
+<span class="material-symbols-outlined text-4xl">favorite</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-stack-sm">Tận tâm</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Đội ngũ hỗ trợ và giảng viên luôn sẵn sàng đồng hành cùng học viên 24/7 trên con đường chinh phục tri thức mới.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Leadership Team -->
+<section class="py-24 px-margin-desktop max-w-container-max mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg mb-stack-sm">Đội ngũ lãnh đạo</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Hội tụ những chuyên gia tâm huyết với nền giáo dục Việt Nam và kinh nghiệm từ các tập đoàn công nghệ toàn cầu.</p>
+</div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Leader 1 -->
+<div class="group text-center">
+<div class="relative mb-stack-md overflow-hidden rounded-[32px]">
+<img class="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A professional headshot of a senior male executive in a well-tailored navy suit, posing with a confident and friendly smile. The background is a soft-focus corporate office with warm lighting and indigo accents. The visual style is clean, modern, and high-end, representing intelligence and leadership in the tech education sector." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOj0FxnMa362KsACO_mBdG-Z7mNI50ecx8idzw_DtUDgxzkL6_sIRGKBtVVpBYiroHS6ROjtq-NOMr4RBsi4-QA4yV6jUBWVa3FxYIrMVcvTq7Ti5v43zl5bb0_5SECXDXjJ_pzq0ncbgWYNvYD-_YE_bYk2FkfTK9uG_EhRYMzsnfsBgcxCaoW4pdzh4_hcI08BUpriAs3B-X9J8B19KYI9RtiH_iqarKMP_HMrbXlNSy2PtrhM2GfmtZYfnRvPJ8fjwvxADmrv4"/>
+</div>
+<h5 class="font-headline-md text-headline-md mb-1">Dr. Nguyễn Minh Quân</h5>
+<p class="font-label-md text-label-md text-primary font-bold uppercase tracking-widest">Founder &amp; CEO</p>
+</div>
+<!-- Leader 2 -->
+<div class="group text-center">
+<div class="relative mb-stack-md overflow-hidden rounded-[32px]">
+<img class="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A professional headshot of an Asian female CTO in a stylish, minimalist white blazer. She has a bright, intelligent expression, set against a modern architectural background with glass and soft blue tones. The lighting is elegant and professional, following the modern SaaS aesthetic of the EduFlow brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyAcGywcvlnvHZ4nxQRxFgZq09EPwGZTC8jyeiN_pWQi83x5R92cU65qatS4lH6e4wqvVjD-HW7vR_y5dwhOeN0BsH0MjZIbKp8tkmscf7C1kZI-M5gOrFbMsvi1uxXSjrasgl7in41CJmYSgBJQuL_iZZwY0hEPpXBIoKr4VEyTFQQhaoFUOVhBzSfoQnfFcQwv61mw3Q5pDzAEYEeAx59aNp873QpvPDFaAgT01CLC3TgJgFj8DRstGS70np55JgpY5ech8SYGk"/>
+</div>
+<h5 class="font-headline-md text-headline-md mb-1">Trần Thu Hương</h5>
+<p class="font-label-md text-label-md text-primary font-bold uppercase tracking-widest">Chief Technology Officer</p>
+</div>
+<!-- Leader 3 -->
+<div class="group text-center">
+<div class="relative mb-stack-md overflow-hidden rounded-[32px]">
+<img class="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A professional headshot of a creative male Chief Product Officer with a friendly and approachable demeanor, wearing a smart-casual dark grey turtleneck. The background is a bright studio with soft, diffused lighting and subtle indigo highlights, emphasizing a creative and precise minimalist design language." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCAcJ4UmNIA_fRf-fJjBkzWR_DkSad2OpKJVWog5PfdGEx23DX1OnJUOzXN47OTlbQU0na1z4JHKXpqWTWshcD32EVQE2aKMWuq1uCODklLPTU_RwrPW6h1h0AXUxJyjHf_wHpryEigEou57hb_fgK-5VOn9jn5zR4XfHQZhGlgV6GySplroZl4Xz9fXbWw5S_Ts4uA6JtbL-fQI5miWp8WV446cBM9SuM6pQk8gp03uK5k7W_3g6Ku7xskXjW64xenxlSNnMqw_A"/>
+</div>
+<h5 class="font-headline-md text-headline-md mb-1">Lê Hoàng Nam</h5>
+<p class="font-label-md text-label-md text-primary font-bold uppercase tracking-widest">Chief Product Officer</p>
+</div>
+<!-- Leader 4 -->
+<div class="group text-center">
+<div class="relative mb-stack-md overflow-hidden rounded-[32px]">
+<img class="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A professional headshot of a female Chief Academic Officer with an encouraging and wise expression. She is wearing a professional indigo-colored business attire, set against a library or study background that is beautifully blurred. The lighting is warm yet crisp, fitting a premium educational platform's identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5DyhruXTTGRGwAb6PtTPNluLvoNB-CM_mfNXeDOb8vbU_Rz2jqQmygr91eNTl_a88jQYXG7YmzJoOwANZybWt8RNTRUTfiSchhoNu3gVIIQtbecsySpZFxrA5chC6qG92GYpoh9pA9j6Sdp4uiWp4bzxnBh1OccSOP58mSk5bI5sVyRoqmfyPCqIDw6mOctGo5uye8YkpHW-o3KVekS1P4nkfjnb1yGHpJaJFEod9DFSIKX__WJYC110mG8RsuCUmVinqZatuZ8o"/>
+</div>
+<h5 class="font-headline-md text-headline-md mb-1">Phạm Ngọc Ánh</h5>
+<p class="font-label-md text-label-md text-primary font-bold uppercase tracking-widest">Head of Education</p>
+</div>
+</div>
+</section>
+<!-- Partners -->
+<section class="py-24 bg-surface-container-lowest">
+<div class="px-margin-desktop max-w-container-max mx-auto">
+<p class="text-center font-label-md text-label-md text-on-surface-variant uppercase tracking-widest mb-12">Đối tác chiến lược</p>
+<div class="flex flex-wrap justify-center items-center gap-12 lg:gap-24 grayscale opacity-60 hover:grayscale-0 transition-all duration-500">
+<div class="h-10 w-32 flex items-center justify-center font-headline-md text-headline-md font-bold text-on-surface-variant">UNI-TECH</div>
+<div class="h-10 w-32 flex items-center justify-center font-headline-md text-headline-md font-bold text-on-surface-variant">GlobalDev</div>
+<div class="h-10 w-32 flex items-center justify-center font-headline-md text-headline-md font-bold text-on-surface-variant">FutureEd</div>
+<div class="h-10 w-32 flex items-center justify-center font-headline-md text-headline-md font-bold text-on-surface-variant">CloudSys</div>
+<div class="h-10 w-32 flex items-center justify-center font-headline-md text-headline-md font-bold text-on-surface-variant">NextGen</div>
+</div>
+</div>
+</section>
+<!-- Call to Action -->
+<section class="py-24 px-margin-desktop max-w-container-max mx-auto">
+<div class="relative rounded-[48px] overflow-hidden bg-primary px-stack-lg py-20 text-center">
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<div class="absolute top-0 left-0 w-full h-full shimmer"></div>
+<div class="grid grid-cols-6 h-full">
+<div class="border-r border-white/20"></div>
+<div class="border-r border-white/20"></div>
+<div class="border-r border-white/20"></div>
+<div class="border-r border-white/20"></div>
+<div class="border-r border-white/20"></div>
+</div>
+</div>
+<div class="relative z-10 max-w-3xl mx-auto">
+<h2 class="font-display text-display text-white mb-stack-md">Sẵn sàng để bắt đầu hành trình mới?</h2>
+<p class="font-body-lg text-body-lg text-white/80 mb-stack-lg">Tham gia cùng hơn 100,000 học viên khác hoặc trở thành giảng viên để chia sẻ kiến thức của bạn với cộng đồng.</p>
+<div class="flex flex-wrap justify-center gap-stack-md">
+<button class="px-10 py-5 bg-white text-primary font-label-md text-label-md font-bold rounded-2xl shadow-2xl hover:scale-105 active:scale-95 transition-all">Đăng ký học viên</button>
+<button class="px-10 py-5 bg-primary-container text-white border border-white/20 font-label-md text-label-md font-bold rounded-2xl shadow-2xl hover:bg-primary-container/80 active:scale-95 transition-all">Trở thành Giảng viên</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant w-full py-stack-lg">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop max-w-container-max mx-auto gap-stack-lg">
+<div class="flex flex-col gap-unit items-center md:items-start">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">EduFlow</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs text-center md:text-left">Nền tảng học trực tuyến hiện đại bậc nhất Việt Nam.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-stack-lg">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-all hover:underline" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-all hover:underline" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-all hover:underline" href="#">Help Center</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-all hover:underline" href="#">Contact Us</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-all hover:underline" href="#">Careers</a>
+</div>
+<p class="font-body-sm text-body-sm text-secondary">© 2024 EduFlow Inc. All rights reserved.</p>
+</div>
+</footer>
+<script>
+        // Simple scroll reveal interaction
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-8');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section > div').forEach(el => {
+            el.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-8');
+            observer.observe(el);
+        });
+
+        // Header transparency toggle
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-md');
+                header.classList.remove('shadow-sm');
+            } else {
+                header.classList.remove('shadow-md');
+                header.classList.add('shadow-sm');
+            }
+        });
+    </script>
+</body></html>
