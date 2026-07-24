@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { useCart } from "../../contexts/CartContext";
 import {
   deleteMyCourseReview,
   getProviderCourses,
@@ -85,6 +86,8 @@ function RatingStars({ stars }) {
 
 export default function InstructorProfilePage() {
   const { user } = useAuth();
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("courses");
   const [isFollowing, setIsFollowing] = useState(false);
@@ -262,6 +265,28 @@ export default function InstructorProfilePage() {
     }
   };
 
+  const handleOpenCourseDetail = (courseId) => {
+    if (!courseId) return;
+    navigate(`/course/detail/${courseId}`);
+  };
+
+  const handleAddToCart = async (mappedCourse) => {
+    const sourceCourse = courses.find(
+      (course) => String(course._id) === String(mappedCourse.id),
+    );
+
+    await addToCart(
+      sourceCourse || {
+        _id: mappedCourse.id,
+        course_title: mappedCourse.title,
+        image_url: mappedCourse.image,
+        price: mappedCourse.price,
+        price_promotion: null,
+        provider: instructorName,
+      },
+    );
+  };
+
   const mappedCourses = useMemo(() => {
     return courses.map((course, index) => {
       const price = course.price || 0;
@@ -348,7 +373,16 @@ export default function InstructorProfilePage() {
               {mappedCourses.map((course) => (
                 <article
                   key={course.id}
-                  className="group glass-card rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleOpenCourseDetail(course.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      handleOpenCourseDetail(course.id);
+                    }
+                  }}
+                  className="group glass-card rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
                 >
                   <div className="aspect-video relative overflow-hidden">
                     {course.badge ? (
@@ -396,7 +430,14 @@ export default function InstructorProfilePage() {
                           {course.price}
                         </span>
                       </div>
-                      <button className="bg-primary-container/10 text-primary hover:bg-primary-container hover:text-on-primary p-2.5 rounded-xl transition-all duration-300">
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAddToCart(course);
+                        }}
+                        className="bg-primary-container/10 text-primary hover:bg-primary-container hover:text-on-primary p-2.5 rounded-xl transition-all duration-300"
+                      >
                         <span className="material-symbols-outlined">
                           add_shopping_cart
                         </span>
@@ -630,6 +671,10 @@ export default function InstructorProfilePage() {
     reviewMessage,
     reviewSubmitting,
     reviewDeletingCourseId,
+    addToCart,
+    courses,
+    instructorName,
+    navigate,
   ]);
 
   return (
