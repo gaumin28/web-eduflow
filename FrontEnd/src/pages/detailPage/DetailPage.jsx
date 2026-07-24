@@ -32,6 +32,12 @@ const CourseDetailPage = () => {
     navigate("/checkout");
   };
 
+  const handleOpenInstructorProfile = () => {
+    const providerId = course?.course?.provider_id;
+    if (!providerId) return;
+    navigate(`/courses-provider?providerId=${providerId}`);
+  };
+
   //Hiệu ứng xuất hiện mượt mà khi scroll (Scroll Reveal)
   useEffect(() => {
     if (!course) return;
@@ -355,7 +361,10 @@ const CourseDetailPage = () => {
               </h2>
               <div className="flex flex-col gap-4">
                 <div>
-                  <h3 className="text-xl font-bold text-primary underline underline-offset-4 decoration-primary/30">
+                  <h3
+                    className="text-xl font-bold text-primary underline underline-offset-4 decoration-primary/30 cursor-pointer"
+                    onClick={handleOpenInstructorProfile}
+                  >
                     {course.course.provider_name}
                   </h3>
                   <p className="text-on-surface-variant text-sm mt-1">
@@ -364,9 +373,13 @@ const CourseDetailPage = () => {
                 </div>
                 <div className="flex gap-8 items-start">
                   <img
-                    alt="Marcus Sterling"
-                    className="w-28 h-28 rounded-full object-cover shadow-sm"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvtcD6oC7w8QaKBKPo44FHxbvq-wIVSEWgTUZobOKYRYLAyGwFn6mxhmhUu_39HKM3_JEGptqciRfWcuZqapXIpQYd5PAsjjpP17uhsY-cnQrMu6VtCXBrTxYYvK-3ENJiLlC_ry72jdSzkHjj-umumKc2Mi5RFpJhz2gLwvCotyqf1WWMq-CoUrxQHsfHm06XjlcYkBpI5l_wtravSGxB0wQ2frm6CK-zhs9n4btb6WINfzO0Gp0nBETHem131JTL5grXnUyPv_8"
+                    alt={course.course.provider_name || "Giảng viên"}
+                    className="w-28 h-28 rounded-full object-cover shadow-sm cursor-pointer"
+                    onClick={handleOpenInstructorProfile}
+                    src={
+                      course.course.provider_avatar ||
+                      "https://placehold.co/200x200/e5e7eb/6b7280?text=Avatar"
+                    }
                   />
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-2 text-sm">

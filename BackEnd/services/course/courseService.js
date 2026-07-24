@@ -9,12 +9,11 @@ import quizAnswerModel from "../../models/quiz/quizAnswer.js";
 import orderModel from "../../models/order.js";
 import courseProgressModel from "../../models/course/courseProgress.js";
 
-
 export const getCourseDetail = async (courseId) => {
   const course = await courseModel
     .findById(courseId)
     .populate("category_id", "cate_name")
-    .populate("provider_id", "provider_name")
+    .populate("provider_id", "provider_name avatar")
     .lean();
 
   if (!course) return null;
@@ -25,28 +24,30 @@ export const getCourseDetail = async (courseId) => {
     courseSectionModel.find({ course_id: courseId }).lean(),
   ]);
 
-  const lectures = await lectureModel.find({
-    section_id: { $in: sections.map((s) => s._id) },
-  }).lean();
+  const lectures = await lectureModel
+    .find({
+      section_id: { $in: sections.map((s) => s._id) },
+    })
+    .lean();
 
-  const quizzes = await quizModel.find({
+  const quizzes = await quizModel
+    .find({
       section_id: {
-          $in: sections.map(section => section._id)
-      }
-  }).lean();
+        $in: sections.map((section) => section._id),
+      },
+    })
+    .lean();
 
-  const sectionsWithLectures = sections.map(section => ({
+  const sectionsWithLectures = sections.map((section) => ({
     ...section,
 
     lectures: lectures.filter(
-      lecture =>
-        lecture.section_id.toString() === section._id.toString()
+      (lecture) => lecture.section_id.toString() === section._id.toString(),
     ),
 
     quizzes: quizzes.filter(
-      quiz =>
-        quiz.section_id.toString() === section._id.toString()
-    )
+      (quiz) => quiz.section_id.toString() === section._id.toString(),
+    ),
   }));
 
   return {
@@ -56,6 +57,7 @@ export const getCourseDetail = async (courseId) => {
       category_name: course.category_id?.cate_name,
       provider_id: course.provider_id?._id,
       provider_name: course.provider_id?.provider_name,
+      provider_avatar: course.provider_id?.avatar ?? "",
     },
     requests,
     overviews,
@@ -63,12 +65,11 @@ export const getCourseDetail = async (courseId) => {
   };
 };
 
-
 export const getCourseLearningDetail = async (userId, courseId) => {
   const order = await orderModel.findOne({
-      user: userId,
-      payment_status: "paid",
-      "items.course": courseId,
+    user: userId,
+    payment_status: "paid",
+    "items.course": courseId,
   });
 
   if (!order) {
@@ -77,7 +78,7 @@ export const getCourseLearningDetail = async (userId, courseId) => {
   const course = await courseModel
     .findById(courseId)
     .populate("category_id", "cate_name")
-    .populate("provider_id", "provider_name")
+    .populate("provider_id", "provider_name avatar")
     .lean();
 
   if (!course) {
@@ -85,33 +86,39 @@ export const getCourseLearningDetail = async (userId, courseId) => {
   }
 
   const [overviews, requests, sections, progress] = await Promise.all([
-  courseOverviewModel.find({ course_id: courseId }).lean(),
-  courseRequestModel.find({ course_id: courseId }).lean(),
-  courseSectionModel.find({ course_id: courseId }).lean(),
-  courseProgressModel.findOne({
-      user_id: userId,
-      course_id: courseId,
-    }).lean(),
+    courseOverviewModel.find({ course_id: courseId }).lean(),
+    courseRequestModel.find({ course_id: courseId }).lean(),
+    courseSectionModel.find({ course_id: courseId }).lean(),
+    courseProgressModel
+      .findOne({
+        user_id: userId,
+        course_id: courseId,
+      })
+      .lean(),
   ]);
 
-  const lectures = await lectureModel.find({
-    section_id: {
-      $in: sections.map((section) => section._id),
-    },
-  }).lean();
+  const lectures = await lectureModel
+    .find({
+      section_id: {
+        $in: sections.map((section) => section._id),
+      },
+    })
+    .lean();
 
   const totalSections = sections.length;
   const totalLectures = lectures.length;
-  
-  const quizzes = await quizModel.find({
-    section_id: {
-      $in: sections.map((section) => section._id),
-    },
-  }).lean();
+
+  const quizzes = await quizModel
+    .find({
+      section_id: {
+        $in: sections.map((section) => section._id),
+      },
+    })
+    .lean();
 
   const sectionsWithData = sections.map((section) => {
     const sectionLectures = lectures.filter(
-      (lecture) => lecture.section_id.toString() === section._id.toString()
+      (lecture) => lecture.section_id.toString() === section._id.toString(),
     );
 
     return {
@@ -119,7 +126,7 @@ export const getCourseLearningDetail = async (userId, courseId) => {
 
       is_unlocked:
         progress?.unlocked_section_ids.some(
-          (id) => id.toString() === section._id.toString()
+          (id) => id.toString() === section._id.toString(),
         ) || false,
 
       lectures: sectionLectures.map((lecture) => ({
@@ -127,7 +134,7 @@ export const getCourseLearningDetail = async (userId, courseId) => {
 
         is_completed:
           progress?.completed_lecture_ids.some(
-            (id) => id.toString() === lecture._id.toString()
+            (id) => id.toString() === lecture._id.toString(),
           ) || false,
 
         is_current:
@@ -135,15 +142,13 @@ export const getCourseLearningDetail = async (userId, courseId) => {
       })),
 
       quizzes: quizzes
-        .filter(
-          (quiz) => quiz.section_id.toString() === section._id.toString()
-        )
+        .filter((quiz) => quiz.section_id.toString() === section._id.toString())
         .map((quiz) => ({
           ...quiz,
 
           is_completed:
             progress?.completed_quiz_ids.some(
-              (id) => id.toString() === quiz._id.toString()
+              (id) => id.toString() === quiz._id.toString(),
             ) || false,
         })),
     };
@@ -158,6 +163,7 @@ export const getCourseLearningDetail = async (userId, courseId) => {
       category_name: course.category_id?.cate_name,
       provider_id: course.provider_id?._id,
       provider_name: course.provider_id?.provider_name,
+      provider_avatar: course.provider_id?.avatar ?? "",
     },
 
     progress: {
@@ -219,7 +225,7 @@ export const createProgressAfterCheckout = async (userId, items) => {
 export const updateLearningProgressService = async (
   userId,
   courseId,
-  lectureId
+  lectureId,
 ) => {
   const progress = await courseProgressModel.findOneAndUpdate(
     {
@@ -233,7 +239,7 @@ export const updateLearningProgressService = async (
     },
     {
       returnDocument: "after",
-    }
+    },
   );
 
   if (!progress) {
@@ -243,11 +249,7 @@ export const updateLearningProgressService = async (
   return progress;
 };
 
-export const completeLectureService = async (
-  userId,
-  courseId,
-  lectureId
-) => {
+export const completeLectureService = async (userId, courseId, lectureId) => {
   const lecture = await lectureModel.findById(lectureId);
 
   if (!lecture) {
@@ -266,7 +268,7 @@ export const completeLectureService = async (
     },
     {
       returnDocument: "after",
-    }
+    },
   );
 
   return progress;
