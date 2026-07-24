@@ -7,7 +7,7 @@ import { checkoutCart } from "../../services/cartService";
 const PAYMENT_OPTIONS = [
   {
     key: "card",
-    label: "Credit Card",
+    label: "Thẻ tín dụng",
     icon: "credit_card",
   },
   {
@@ -37,41 +37,41 @@ function validateCheckoutForm(paymentType, formValues) {
 
   if (paymentType === "card") {
     if (!formValues.cardholderName.trim()) {
-      errors.cardholderName = "Cardholder name is required.";
+      errors.cardholderName = "Vui lòng nhập tên chủ thẻ.";
     }
 
     const cardNumberDigits = formValues.cardNumber.replace(/\D/g, "");
     if (!cardNumberDigits) {
-      errors.cardNumber = "Card number is required.";
+      errors.cardNumber = "Vui lòng nhập số thẻ.";
     } else if (cardNumberDigits.length < 13 || cardNumberDigits.length > 19) {
-      errors.cardNumber = "Card number is invalid.";
+      errors.cardNumber = "Số thẻ không hợp lệ.";
     }
 
     const expiry = formValues.expiryDate.trim();
     if (!expiry) {
-      errors.expiryDate = "Expiry date is required.";
+      errors.expiryDate = "Vui lòng nhập ngày hết hạn.";
     } else if (!/^(0[1-9]|1[0-2])\/(\d{2})$/.test(expiry)) {
-      errors.expiryDate = "Use MM/YY format.";
+      errors.expiryDate = "Vui lòng dùng định dạng MM/YY.";
     }
 
     const cvvDigits = formValues.cvv.replace(/\D/g, "");
     if (!cvvDigits) {
-      errors.cvv = "CVV is required.";
+      errors.cvv = "Vui lòng nhập CVV.";
     } else if (cvvDigits.length < 3 || cvvDigits.length > 4) {
-      errors.cvv = "CVV is invalid.";
+      errors.cvv = "CVV không hợp lệ.";
     }
   }
 
   if (!formValues.streetAddress.trim()) {
-    errors.streetAddress = "Street address is required.";
+    errors.streetAddress = "Vui lòng nhập địa chỉ đường.";
   }
 
   if (!formValues.city.trim()) {
-    errors.city = "City is required.";
+    errors.city = "Vui lòng nhập thành phố.";
   }
 
   if (!formValues.postalCode.trim()) {
-    errors.postalCode = "Postal code is required.";
+    errors.postalCode = "Vui lòng nhập mã bưu chính.";
   }
 
   return errors;
@@ -123,7 +123,7 @@ export default function CheckoutPage() {
     const validationErrors = validateCheckoutForm(paymentType, formValues);
     if (Object.keys(validationErrors).length > 0) {
       setFieldErrors(validationErrors);
-      message.error("Please fill all required checkout fields.");
+      message.error("Vui lòng điền đầy đủ các trường bắt buộc.");
       return;
     }
 
@@ -165,12 +165,12 @@ export default function CheckoutPage() {
         <section className="lg:col-span-7 space-y-8">
           <div className="space-y-6">
             <h1 className="font-headline-lg text-headline-lg text-on-surface">
-              Checkout
+              Thanh toán
             </h1>
 
             <div className="space-y-4">
               <p className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">
-                Payment Method
+                Phương thức thanh toán
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -213,7 +213,7 @@ export default function CheckoutPage() {
             >
               <div className="space-y-2">
                 <label className="font-label-md text-label-md text-on-surface-variant">
-                  Cardholder Name
+                  Tên chủ thẻ
                 </label>
                 <input
                   className={`w-full bg-surface-container-lowest border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
@@ -221,7 +221,7 @@ export default function CheckoutPage() {
                       ? "border-error"
                       : "border-outline-variant"
                   }`}
-                  placeholder="John Doe"
+                  placeholder="Nguyen Van A"
                   type="text"
                   value={formValues.cardholderName}
                   onChange={(event) =>
@@ -237,7 +237,7 @@ export default function CheckoutPage() {
 
               <div className="space-y-2">
                 <label className="font-label-md text-label-md text-on-surface-variant">
-                  Card Number
+                  Số thẻ
                 </label>
                 <div className="relative">
                   <input
@@ -265,7 +265,7 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="font-label-md text-label-md text-on-surface-variant">
-                    Expiry Date
+                    Ngày hết hạn
                   </label>
                   <input
                     className={`w-full bg-surface-container-lowest border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
@@ -312,12 +312,12 @@ export default function CheckoutPage() {
 
             <div className="space-y-4">
               <p className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">
-                Billing Address
+                Địa chỉ thanh toán
               </p>
               <div className="glass-card p-stack-md rounded-xl space-y-4 shadow-sm">
                 <div className="space-y-2">
                   <label className="font-label-md text-label-md text-on-surface-variant">
-                    Street Address
+                    Địa chỉ đường
                   </label>
                   <input
                     className={`w-full bg-surface-container-lowest border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
@@ -325,7 +325,7 @@ export default function CheckoutPage() {
                         ? "border-error"
                         : "border-outline-variant"
                     }`}
-                    placeholder="123 Education Lane"
+                    placeholder="123 Đường Giáo Dục"
                     type="text"
                     value={formValues.streetAddress}
                     onChange={(event) =>
@@ -341,7 +341,7 @@ export default function CheckoutPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="font-label-md text-label-md text-on-surface-variant">
-                      City
+                      Thành phố
                     </label>
                     <input
                       className={`w-full bg-surface-container-lowest border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
@@ -349,7 +349,7 @@ export default function CheckoutPage() {
                           ? "border-error"
                           : "border-outline-variant"
                       }`}
-                      placeholder="San Francisco"
+                      placeholder="TP. Ho Chi Minh"
                       type="text"
                       value={formValues.city}
                       onChange={(event) =>
@@ -362,7 +362,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="space-y-2">
                     <label className="font-label-md text-label-md text-on-surface-variant">
-                      Postal Code
+                      Mã bưu chính
                     </label>
                     <input
                       className={`w-full bg-surface-container-lowest border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
@@ -393,7 +393,7 @@ export default function CheckoutPage() {
           <div className="sticky top-24 space-y-6">
             <div className="glass-card rounded-2xl p-stack-lg shadow-sm flex flex-col gap-6">
               <h2 className="font-headline-md text-headline-md text-on-surface">
-                Order Summary
+                Tóm tắt đơn hàng
               </h2>
 
               <div className="space-y-4">
@@ -411,7 +411,7 @@ export default function CheckoutPage() {
                         {item.title}
                       </h3>
                       <p className="font-body-sm text-body-sm text-on-surface-variant">
-                        Instructor: {item.instructor}
+                        Giảng viên: {item.instructor}
                       </p>
                       <p className="font-label-md text-label-md text-primary mt-1">
                         {formatMoney(item.price)}
@@ -430,19 +430,19 @@ export default function CheckoutPage() {
 
               <div className="space-y-2">
                 <div className="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
-                  <span>Subtotal</span>
+                  <span>Tạm tính</span>
                   <span>{formatMoney(subtotal)}</span>
                 </div>
                 <div className="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
-                  <span>Discount</span>
+                  <span>Giảm giá</span>
                   <span>-{formatMoney(saleDiscount)}</span>
                 </div>
                 <div className="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
-                  <span>Taxes</span>
+                  <span>Thuế</span>
                   <span>{formatMoney(tax)}</span>
                 </div>
                 <div className="flex justify-between font-headline-md text-headline-md text-on-surface pt-2">
-                  <span>Total</span>
+                  <span>Tổng cộng</span>
                   <span>{formatMoney(total)}</span>
                 </div>
               </div>
@@ -454,7 +454,7 @@ export default function CheckoutPage() {
                 className="w-full py-4 rounded-xl font-label-md text-label-md text-on-primary shadow-lg transition-transform active:scale-[0.98] flex items-center justify-center gap-2 group bg-linear-to-r from-primary-container to-primary disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <span>
-                  {isSubmitting ? "Processing..." : "Complete Purchase"}
+                  {isSubmitting ? "Đang xử lý..." : "Hoàn tất thanh toán"}
                 </span>
                 <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">
                   arrow_forward
@@ -463,13 +463,13 @@ export default function CheckoutPage() {
 
               {cartItems.length > 0 && !isCheckoutFormValid ? (
                 <p className="font-body-sm text-body-sm text-error text-center">
-                  Please complete all required fields to continue.
+                  Vui lòng điền đầy đủ các trường bắt buộc để tiếp tục.
                 </p>
               ) : null}
 
               <p className="font-body-sm text-body-sm text-on-surface-variant text-center">
-                By clicking "Complete Purchase", you agree to EduFlow&apos;s
-                Terms of Service and Refund Policy.
+                Khi nhấn "Hoàn tất thanh toán", bạn đồng ý với Điều khoản dịch
+                vụ và Chính sách hoàn tiền của EduFlow.
               </p>
 
               <div className="flex justify-center items-center gap-6 pt-2 grayscale opacity-60">
@@ -508,10 +508,10 @@ export default function CheckoutPage() {
               </div>
               <div>
                 <p className="font-label-md text-label-md text-on-surface">
-                  30-Day Money Back Guarantee
+                  Cam kết hoàn tiền trong 30 ngày
                 </p>
                 <p className="font-body-sm text-body-sm text-on-surface-variant">
-                  No questions asked, 100% refund.
+                  Hoàn tiền 100%, không cần giải thích.
                 </p>
               </div>
             </div>

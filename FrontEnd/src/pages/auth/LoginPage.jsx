@@ -250,15 +250,15 @@ export default function LoginPage() {
           {/* Footer Links (standard Vietnamese transliteration or keeping English) */}
           <div className="mt-stack-lg flex justify-center gap-stack-md font-label-sm text-label-sm text-outline">
             <a className="hover:text-on-surface transition-colors" href="#">
-              Privacy Policy
+              Chính sách bảo mật
             </a>
             <span>•</span>
             <a className="hover:text-on-surface transition-colors" href="#">
-              Terms of Service
+              Điều khoản dịch vụ
             </a>
             <span>•</span>
             <a className="hover:text-on-surface transition-colors" href="#">
-              Help Center
+              Trung tâm trợ giúp
             </a>
           </div>
         </div>
