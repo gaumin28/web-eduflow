@@ -181,10 +181,10 @@ export default function CourseSearchPage() {
           <div className="relative z-10 max-w-2xl">
             <h1 className="font-display text-display mb-4">{pageTitle}</h1>
             <p className="font-body-lg text-body-lg opacity-90 leading-relaxed">
-              Master the art of building robust, scalable applications. From web
-              development to machine learning, our expert-led courses provide
-              hands-on experience with the industry&apos;s most in-demand
-              technologies.
+              Làm chủ nghệ thuật xây dựng các ứng dụng mạnh mẽ, có khả năng mở
+              rộng. Từ phát triển web đến học máy, các khóa học do chuyên gia
+              dẫn dắt của chúng tôi mang đến trải nghiệm thực hành với những
+              công nghệ được ngành công nghiệp săn đón nhất.
             </p>
           </div>
           <div className="absolute right-0 top-0 w-1/3 h-full opacity-10 pointer-events-none">

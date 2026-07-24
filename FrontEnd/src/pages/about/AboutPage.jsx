@@ -34,7 +34,7 @@ export default function AboutPage() {
     <div className="bg-background text-on-surface font-body-md selection:bg-primary-fixed-dim selection:text-primary ">
       <main className="pt-16">
         {/* Hero Section */}
-        <section className="relative h-[819px] min-h-[600px] flex items-center overflow-hidden">
+        <section className="relative h-204.75 min-h-150 flex items-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <img
               className="w-full h-full object-cover"
@@ -52,9 +52,9 @@ export default function AboutPage() {
                 Nâng tầm tri thức Việt qua giáo dục số hiện đại.
               </h1>
               <p className="font-body-lg text-body-lg text-white/80 mb-stack-lg max-w-2xl">
-                Chúng tôi không chỉ cung cấp các khóa học, chúng tôi xây dựng một
-                cộng đồng học tập không giới hạn, nơi kiến thức được truyền tải một
-                cách chuyên nghiệp và tinh tế nhất.
+                Chúng tôi không chỉ cung cấp các khóa học, chúng tôi xây dựng
+                một cộng đồng học tập không giới hạn, nơi kiến thức được truyền
+                tải một cách chuyên nghiệp và tinh tế nhất.
               </p>
               <div className="flex flex-wrap gap-stack-md">
                 <Link
@@ -67,26 +67,32 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-        
+
         {/* Stats Section */}
         <section className="relative z-20 -mt-16 px-margin-desktop max-w-7xl mx-auto">
           <div className="bg-white/70 backdrop-blur-md rounded-3xl p-stack-lg shadow-2xl flex flex-wrap justify-around items-center gap-stack-lg text-center border border-outline-variant/50">
             <div className="flex flex-col gap-unit">
-              <span className="font-display text-display text-primary">100k+</span>
+              <span className="font-display text-display text-primary">
+                100k+
+              </span>
               <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">
                 Học viên tin tưởng
               </span>
             </div>
             <div className="w-px h-16 bg-outline-variant hidden lg:block"></div>
             <div className="flex flex-col gap-unit">
-              <span className="font-display text-display text-primary">500+</span>
+              <span className="font-display text-display text-primary">
+                500+
+              </span>
               <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">
                 Giảng viên chuyên gia
               </span>
             </div>
             <div className="w-px h-16 bg-outline-variant hidden lg:block"></div>
             <div className="flex flex-col gap-unit">
-              <span className="font-display text-display text-primary">1000+</span>
+              <span className="font-display text-display text-primary">
+                1000+
+              </span>
               <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">
                 Khóa học thực chiến
               </span>
@@ -110,8 +116,8 @@ export default function AboutPage() {
                 </h3>
                 <p className="font-body-md text-body-md text-on-surface-variant">
                   Trở thành nền tảng giáo dục số hàng đầu Đông Nam Á, nơi mọi cá
-                  nhân đều có thể tiếp cận với tri thức tinh hoa từ các chuyên gia
-                  hàng đầu một cách dễ dàng và hiệu quả nhất.
+                  nhân đều có thể tiếp cận với tri thức tinh hoa từ các chuyên
+                  gia hàng đầu một cách dễ dàng và hiệu quả nhất.
                 </p>
               </div>
               <div className="p-stack-lg bg-white/70 backdrop-blur-md rounded-3xl border border-primary/20">
@@ -123,15 +129,15 @@ export default function AboutPage() {
                 </h3>
                 <p className="font-body-md text-body-md text-on-surface-variant">
                   Bình đẳng hóa cơ hội học tập thông qua công nghệ, cung cấp lộ
-                  trình học tập cá nhân hóa và hỗ trợ cộng đồng tri thức Việt vươn
-                  tầm quốc tế.
+                  trình học tập cá nhân hóa và hỗ trợ cộng đồng tri thức Việt
+                  vươn tầm quốc tế.
                 </p>
               </div>
             </div>
             <div className="relative group">
               <div className="absolute -inset-4 bg-primary/10 rounded-[40px] blur-3xl group-hover:bg-primary/20 transition-all duration-700"></div>
               <img
-                className="relative rounded-[40px] shadow-2xl w-full h-[500px] object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                className="relative rounded-[40px] shadow-2xl w-full h-125 object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                 alt="Vision"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZUvOzNXPa5Ihz4XyC6GWsR-Tdgnngl5ksYxhxkUt3GKvIBkK0-6FKA-YNzM8DfZTulj3wpvGsaV2cWoJkFdmxsH50aGt3G6xLjOzD7xF7rLlC9XdKUJk2ovD6zLDEdz41BaYYwHfNCxsDO1EkqBj8I5dA4CB0u0tFiTsfbiSaYdPALnlAwGOEggVUSqhCLwMDLOA69tQgNIGHEOB0hUd-qWF5A-znGNU3ToBcd4-O_HNGAgtbP6ZWjNz4a6Q4t4XcKckTo5ng1MI"
               />
@@ -162,8 +168,8 @@ export default function AboutPage() {
                   Chất lượng
                 </h4>
                 <p className="font-body-sm text-body-sm text-on-surface-variant">
-                  Tất cả bài giảng đều được kiểm duyệt gắt gao về mặt chuyên môn và
-                  kỹ thuật sản xuất, đảm bảo trải nghiệm học tập tốt nhất.
+                  Tất cả bài giảng đều được kiểm duyệt gắt gao về mặt chuyên môn
+                  và kỹ thuật sản xuất, đảm bảo trải nghiệm học tập tốt nhất.
                 </p>
               </div>
               <div className="p-stack-lg bg-surface-container-lowest rounded-3xl shadow-sm border border-outline-variant hover:border-primary transition-colors group">
@@ -176,8 +182,8 @@ export default function AboutPage() {
                   Sáng tạo
                 </h4>
                 <p className="font-body-sm text-body-sm text-on-surface-variant">
-                  Chúng tôi không ngừng đổi mới phương pháp giảng dạy và ứng dụng AI
-                  để tối ưu hóa lộ trình học tập cá nhân hóa.
+                  Chúng tôi không ngừng đổi mới phương pháp giảng dạy và ứng
+                  dụng AI để tối ưu hóa lộ trình học tập cá nhân hóa.
                 </p>
               </div>
               <div className="p-stack-lg bg-surface-container-lowest rounded-3xl shadow-sm border border-outline-variant hover:border-primary transition-colors group">
@@ -190,8 +196,8 @@ export default function AboutPage() {
                   Tận tâm
                 </h4>
                 <p className="font-body-sm text-body-sm text-on-surface-variant">
-                  Đội ngũ hỗ trợ và giảng viên luôn sẵn sàng đồng hành cùng học viên
-                  24/7 trên con đường chinh phục tri thức mới.
+                  Đội ngũ hỗ trợ và giảng viên luôn sẵn sàng đồng hành cùng học
+                  viên 24/7 trên con đường chinh phục tri thức mới.
                 </p>
               </div>
             </div>
@@ -205,13 +211,13 @@ export default function AboutPage() {
               Đội ngũ lãnh đạo
             </h2>
             <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
-              Hội tụ những chuyên gia tâm huyết với nền giáo dục Việt Nam và kinh
-              nghiệm từ các tập đoàn công nghệ toàn cầu.
+              Hội tụ những chuyên gia tâm huyết với nền giáo dục Việt Nam và
+              kinh nghiệm từ các tập đoàn công nghệ toàn cầu.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
             <div className="group text-center">
-              <div className="relative mb-stack-md overflow-hidden rounded-[32px]">
+              <div className="relative mb-stack-md overflow-hidden rounded-4xl">
                 <img
                   className="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-110"
                   alt="CEO"
@@ -226,7 +232,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="group text-center">
-              <div className="relative mb-stack-md overflow-hidden rounded-[32px]">
+              <div className="relative mb-stack-md overflow-hidden rounded-4xl">
                 <img
                   className="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-110"
                   alt="CTO"
@@ -241,7 +247,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="group text-center">
-              <div className="relative mb-stack-md overflow-hidden rounded-[32px]">
+              <div className="relative mb-stack-md overflow-hidden rounded-4xl">
                 <img
                   className="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-110"
                   alt="CPO"
@@ -256,7 +262,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="group text-center">
-              <div className="relative mb-stack-md overflow-hidden rounded-[32px]">
+              <div className="relative mb-stack-md overflow-hidden rounded-4xl">
                 <img
                   className="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-110"
                   alt="Head of Education"
@@ -307,8 +313,8 @@ export default function AboutPage() {
                 Sẵn sàng để bắt đầu hành trình mới?
               </h2>
               <p className="font-body-lg text-body-lg text-white/80 mb-stack-lg">
-                Tham gia cùng hơn 100,000 học viên khác hoặc trở thành giảng viên
-                để chia sẻ kiến thức của bạn với cộng đồng.
+                Tham gia cùng hơn 100,000 học viên khác hoặc trở thành giảng
+                viên để chia sẻ kiến thức của bạn với cộng đồng.
               </p>
               <div className="flex flex-wrap justify-center gap-stack-md">
                 <Link

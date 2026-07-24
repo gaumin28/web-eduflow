@@ -45,7 +45,7 @@ export default function CategoryFormModal({
       setIconKey("");
     }
     setErrors({});
-  }, [category, open]);
+  }, [category?.cate_name, category?.icon_key, open]);
 
   const validate = () => {
     const newErrors = {};

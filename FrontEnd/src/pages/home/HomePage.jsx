@@ -69,7 +69,6 @@ function ProviderSkeleton() {
   );
 }
 
-
 export default function HomePage() {
   const mainRef = useRef(null);
   const navigate = useNavigate();
@@ -85,11 +84,9 @@ export default function HomePage() {
   const [loadingProv, setLoadingProv] = useState(true);
 
   useEffect(() => {
-
-        socket.on("connect", () => {
-            console.log(socket.id);
-        });
-
+    socket.on("connect", () => {
+      console.log(socket.id);
+    });
   }, [socket]);
 
   const handleSearch = () => {
@@ -194,7 +191,9 @@ export default function HomePage() {
             </h1>
 
             <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-10 opacity-90">
-              Làm chủ các kỹ năng mới từ những giảng viên hàng đầu thế giới. Chương trình học linh hoạt được thiết kế để giúp bạn đạt được mục tiêu nghề nghiệp và đam mê sáng tạo.
+              Làm chủ các kỹ năng mới từ những giảng viên hàng đầu thế giới.
+              Chương trình học linh hoạt được thiết kế để giúp bạn đạt được mục
+              tiêu nghề nghiệp và đam mê sáng tạo.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-2xl mx-auto glass-card p-2 rounded-2xl shadow-xl">
@@ -291,30 +290,35 @@ export default function HomePage() {
                   <CategorySkeleton key={i} />
                 ))
               : categories.slice(1).map((cat, i) => {
-                  const iconKeyMatch = Object.keys(ICON_MAP).find(k => cat.cate_name.toLowerCase().includes(k));
-                  const iconName = iconKeyMatch ? ICON_MAP[iconKeyMatch] : (ICON_MAP[cat.icon_key] ?? "school");
-                  
+                  const iconKeyMatch = Object.keys(ICON_MAP).find((k) =>
+                    cat.cate_name.toLowerCase().includes(k),
+                  );
+                  const iconName = iconKeyMatch
+                    ? ICON_MAP[iconKeyMatch]
+                    : (ICON_MAP[cat.icon_key] ?? "school");
+
                   return (
-                  <Link
-                    key={cat._id}
-                    to={`/all-courses?category=${encodeURIComponent(cat.cate_name)}`}
-                    className={`group relative overflow-hidden rounded-3xl h-47 block ${CATEGORY_BG[i % CATEGORY_BG.length]}`}
-                  >
-                    <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                      <span className="material-symbols-outlined text-[120px]">
-                        {iconName}
-                      </span>
-                    </div>
-                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                      <h3 className="font-headline-md text-headline-md mb-1">
-                        {cat.cate_name}
-                      </h3>
-                      <p className="opacity-80 text-label-sm">
-                        {cat.quantity} khóa học
-                      </p>
-                    </div>
-                  </Link>
-                )})}
+                    <Link
+                      key={cat._id}
+                      to={`/all-courses?category=${encodeURIComponent(cat.cate_name)}`}
+                      className={`group relative overflow-hidden rounded-3xl h-47 block ${CATEGORY_BG[i % CATEGORY_BG.length]}`}
+                    >
+                      <div className="absolute inset-0 flex items-center justify-center opacity-10">
+                        <span className="material-symbols-outlined text-[120px]">
+                          {iconName}
+                        </span>
+                      </div>
+                      <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                        <h3 className="font-headline-md text-headline-md mb-1">
+                          {cat.cate_name}
+                        </h3>
+                        <p className="opacity-80 text-label-sm">
+                          {cat.quantity} khóa học
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })}
           </div>
         </section>
 
@@ -413,7 +417,7 @@ export default function HomePage() {
                 {historyCourses.map((course) => (
                   <div
                     key={course._id}
-                    className="min-w-[280px] sm:min-w-[320px] max-w-[320px] bg-surface rounded-2xl overflow-hidden border border-outline-variant/30 hover:shadow-xl transition-all group flex flex-col snap-start shrink-0"
+                    className="min-w-70 sm:min-w-[320px] max-w-[320px] bg-surface rounded-2xl overflow-hidden border border-outline-variant/30 hover:shadow-xl transition-all group flex flex-col snap-start shrink-0"
                   >
                     <div className="relative aspect-video overflow-hidden">
                       <img
@@ -561,7 +565,9 @@ export default function HomePage() {
                 Vì sao EduFlow là Lựa chọn Số 1 cho Học tập Trực tuyến
               </h2>
               <p className="font-body-md text-on-surface-variant mb-10">
-                Chúng tôi tin vào chất lượng hơn số lượng. Nền tảng được tinh tuyển bởi các chuyên gia trong ngành, đảm bảo bạn học được những kỹ năng thực tiễn nhất cho thị trường hiện tại.
+                Chúng tôi tin vào chất lượng hơn số lượng. Nền tảng được tinh
+                tuyển bởi các chuyên gia trong ngành, đảm bảo bạn học được những
+                kỹ năng thực tiễn nhất cho thị trường hiện tại.
               </p>
 
               <div className="space-y-8">
@@ -613,7 +619,8 @@ export default function HomePage() {
                   Sẵn sàng bắt đầu hành trình phát triển sự nghiệp?
                 </h2>
                 <p className="font-body-lg text-white/70 mb-8">
-                  Gia nhập cùng 2 triệu học viên và kiến tạo tương lai của bạn ngay hôm nay với 7 ngày trải nghiệm miễn phí gói cao cấp.
+                  Gia nhập cùng 2 triệu học viên và kiến tạo tương lai của bạn
+                  ngay hôm nay với 7 ngày trải nghiệm miễn phí gói cao cấp.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
