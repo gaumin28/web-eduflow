@@ -16,9 +16,9 @@ const Header = () => {
 
   useEffect(() => {
     if (socket && user?._id) {
-      socket.emit("join_room", user._id); 
+      socket.emit("join_room", user._id);
     }
-  }, [socket, user]);
+  }, [user]);
 
   const handleSearch = () => {
     const keyword = searchKeyword.trim();
@@ -154,7 +154,7 @@ const Header = () => {
             </button>
             <input
               className="bg-transparent border-none focus:ring-0 text-body-sm w-48 outline-none"
-              placeholder="Search courses..."
+              placeholder="Tìm khóa học..."
               type="text"
               value={searchKeyword}
               onChange={(event) => setSearchKeyword(event.target.value)}
