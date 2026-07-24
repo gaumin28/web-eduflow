@@ -1,24 +1,9 @@
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../contexts/CartContext";
 import { useWishlist } from "../../contexts/WishlistContext";
-
-const RECOMMENDATIONS = [
-  {
-    id: "rec-1",
-    title: "Quản lý sản phẩm 101",
-    price: 19.99,
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBdQvcCu52_hlHrN1ml7EOThZL5cfENwl7U9Y52kl6MM58026wFNGDBJTwxpiJ2wKt89gObpcbxko7ME2qnmN99DBJfNPR4QqkuXpphZ8a_R4E5uw5f0B_3NZjA6MgtwmzfXgJGo8LFmjnYGu-2-PvuweKehmWBq54ba7o1hY8lyR19I-JuX4UlM17P0V-JJ6LIaf77yRAF1lDFplq6pJDIphikTMRr_ntlifhbJy_XngBgGxtwrxwKyY0Uxhdov6tin0TPkgau57M",
-  },
-  {
-    id: "rec-2",
-    title: "Nhập môn an ninh mạng",
-    price: 24.99,
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCKIw0Aze2GvU9QU2bTf8G5my7xexiAYYPfWfg-hPGdjGY-wu0MwQazVh3kIhplM5JBDvUk7IYlIx_jeQfpNk5_OZHLqvG-Y2OJIH2OnLLCkAoLNMIIOBtZT8Ii7olraKvifiJIIalD-sDy0UMtHh573gaBk-2lZR8BPU-t8F6HbvH2dke6b3QerTVZD9um1HUKEur1940No4CqQ3rj16HfCMRESSQAKnQyrU0d1T3ey4bS4WnS1EXwpUe0vMsD3ol99tQPkJ3pcNc",
-  },
-];
+import { getCourses } from "../../services/courseService";
 
 const COUPON_DISCOUNT = 15;
 
@@ -39,6 +24,15 @@ export default function ShoppingCartPage() {
   const [removingItemIds, setRemovingItemIds] = useState(new Set());
   const [couponCode, setCouponCode] = useState("");
   const [isCouponApplied, setIsCouponApplied] = useState(false);
+
+  const { data: recommendationsData = [] } = useQuery({
+    queryKey: ["cart-recommendations"],
+    queryFn: async () => {
+      const { data: res } = await getCourses({ page: 1, limit: 6 });
+      return Array.isArray(res?.data) ? res.data : [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   const removeItem = (itemId) => {
     setRemovingItemIds((prev) => new Set(prev).add(itemId));
@@ -83,9 +77,17 @@ export default function ShoppingCartPage() {
   const tax = cartItems.length > 0 ? taxableAmount * 0.1 : 0;
   const total = taxableAmount + tax;
 
-  const handleRecommendationClick = (title) => {
-    const next = new URLSearchParams({ q: title });
-    navigate(`/all-courses?${next.toString()}`);
+  const recommendedCourses = useMemo(() => {
+    const cartIds = new Set(
+      cartItems.map((item) => String(item.id ?? item._id)),
+    );
+    return recommendationsData
+      .filter((course) => !cartIds.has(String(course._id)))
+      .slice(0, 2);
+  }, [recommendationsData, cartItems]);
+
+  const handleRecommendationClick = (courseId) => {
+    navigate(`/course/detail/${courseId}`);
   };
 
   return (
@@ -211,7 +213,7 @@ export default function ShoppingCartPage() {
                 Khuyến mãi
               </h4>
               <div className="flex gap-2">
-                <div className="relative grow">
+                <div className="relative flex grow">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">
                     local_offer
                   </span>
@@ -291,35 +293,52 @@ export default function ShoppingCartPage() {
                 Có thể bạn cũng thích
               </h4>
               <div className="grid grid-cols-2 gap-stack-sm">
-                {RECOMMENDATIONS.map((item) => (
-                  <article
-                    key={item.id}
-                    className="bg-surface rounded-lg p-2 border border-outline-variant/30 hover:border-primary/50 cursor-pointer transition-colors group"
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => handleRecommendationClick(item.title)}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        handleRecommendationClick(item.title);
-                      }
-                    }}
-                  >
-                    <div className="aspect-video rounded-md bg-surface-variant overflow-hidden mb-2">
-                      <img
-                        className="w-full h-full object-cover"
-                        src={item.image}
-                        alt={item.title}
-                      />
-                    </div>
-                    <p className="font-label-sm text-label-sm truncate">
-                      {item.title}
-                    </p>
-                    <p className="font-label-md text-label-md text-primary">
-                      {formatMoney(item.price)}
-                    </p>
-                  </article>
-                ))}
+                {recommendedCourses.length > 0 ? (
+                  recommendedCourses.map((item) => {
+                    const displayPrice =
+                      item.price_promotion !== null &&
+                      item.price_promotion !== undefined
+                        ? item.price_promotion
+                        : item.price;
+
+                    return (
+                      <article
+                        key={item._id}
+                        className="bg-surface rounded-lg p-2 border border-outline-variant/30 hover:border-primary/50 cursor-pointer transition-colors group"
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => handleRecommendationClick(item._id)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            handleRecommendationClick(item._id);
+                          }
+                        }}
+                      >
+                        <div className="aspect-video rounded-md bg-surface-variant overflow-hidden mb-2">
+                          <img
+                            className="w-full h-full object-cover"
+                            src={
+                              item.image_url ||
+                              "https://placehold.co/400x225/4f46e5/ffffff?text=No+Image"
+                            }
+                            alt={item.course_title}
+                          />
+                        </div>
+                        <p className="font-label-sm text-label-sm truncate">
+                          {item.course_title}
+                        </p>
+                        <p className="font-label-md text-label-md text-primary">
+                          {formatMoney(displayPrice || 0)}
+                        </p>
+                      </article>
+                    );
+                  })
+                ) : (
+                  <p className="col-span-2 font-body-sm text-on-surface-variant">
+                    Chưa có khóa học gợi ý.
+                  </p>
+                )}
               </div>
             </section>
           </div>
