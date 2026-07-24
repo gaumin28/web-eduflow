@@ -32,11 +32,66 @@ function formatMoney(value) {
   return currencyFormatter.format(value);
 }
 
+function validateCheckoutForm(paymentType, formValues) {
+  const errors = {};
+
+  if (paymentType === "card") {
+    if (!formValues.cardholderName.trim()) {
+      errors.cardholderName = "Cardholder name is required.";
+    }
+
+    const cardNumberDigits = formValues.cardNumber.replace(/\D/g, "");
+    if (!cardNumberDigits) {
+      errors.cardNumber = "Card number is required.";
+    } else if (cardNumberDigits.length < 13 || cardNumberDigits.length > 19) {
+      errors.cardNumber = "Card number is invalid.";
+    }
+
+    const expiry = formValues.expiryDate.trim();
+    if (!expiry) {
+      errors.expiryDate = "Expiry date is required.";
+    } else if (!/^(0[1-9]|1[0-2])\/(\d{2})$/.test(expiry)) {
+      errors.expiryDate = "Use MM/YY format.";
+    }
+
+    const cvvDigits = formValues.cvv.replace(/\D/g, "");
+    if (!cvvDigits) {
+      errors.cvv = "CVV is required.";
+    } else if (cvvDigits.length < 3 || cvvDigits.length > 4) {
+      errors.cvv = "CVV is invalid.";
+    }
+  }
+
+  if (!formValues.streetAddress.trim()) {
+    errors.streetAddress = "Street address is required.";
+  }
+
+  if (!formValues.city.trim()) {
+    errors.city = "City is required.";
+  }
+
+  if (!formValues.postalCode.trim()) {
+    errors.postalCode = "Postal code is required.";
+  }
+
+  return errors;
+}
+
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const { cartItems, clearCart } = useCart();
   const [paymentType, setPaymentType] = useState("card");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formValues, setFormValues] = useState({
+    cardholderName: "",
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+    streetAddress: "",
+    city: "",
+    postalCode: "",
+  });
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const subtotal = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.price, 0),
@@ -54,9 +109,25 @@ export default function CheckoutPage() {
   const taxableAmount = Math.max(subtotal - saleDiscount, 0);
   const tax = cartItems.length > 0 ? taxableAmount * 0.1 : 0;
   const total = taxableAmount + tax;
+  const liveValidationErrors = useMemo(
+    () => validateCheckoutForm(paymentType, formValues),
+    [paymentType, formValues],
+  );
+  const isCheckoutFormValid = Object.keys(liveValidationErrors).length === 0;
+  const canCompletePurchase =
+    cartItems.length > 0 && !isSubmitting && isCheckoutFormValid;
 
   const handleCompletePurchase = async () => {
     if (cartItems.length === 0 || isSubmitting) return;
+
+    const validationErrors = validateCheckoutForm(paymentType, formValues);
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+      message.error("Please fill all required checkout fields.");
+      return;
+    }
+
+    setFieldErrors({});
 
     setIsSubmitting(true);
 
@@ -70,6 +141,21 @@ export default function CheckoutPage() {
       message.error(backendMessage || "Checkout thất bại. Vui lòng thử lại.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleFieldChange = (field, value) => {
+    setFormValues((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
     }
   };
 
@@ -130,10 +216,23 @@ export default function CheckoutPage() {
                   Cardholder Name
                 </label>
                 <input
-                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                  className={`w-full bg-surface-container-lowest border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
+                    fieldErrors.cardholderName
+                      ? "border-error"
+                      : "border-outline-variant"
+                  }`}
                   placeholder="John Doe"
                   type="text"
+                  value={formValues.cardholderName}
+                  onChange={(event) =>
+                    handleFieldChange("cardholderName", event.target.value)
+                  }
                 />
+                {fieldErrors.cardholderName ? (
+                  <p className="text-error text-xs">
+                    {fieldErrors.cardholderName}
+                  </p>
+                ) : null}
               </div>
 
               <div className="space-y-2">
@@ -142,14 +241,25 @@ export default function CheckoutPage() {
                 </label>
                 <div className="relative">
                   <input
-                    className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg pl-4 pr-12 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className={`w-full bg-surface-container-lowest border rounded-lg pl-4 pr-12 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
+                      fieldErrors.cardNumber
+                        ? "border-error"
+                        : "border-outline-variant"
+                    }`}
                     placeholder="0000 0000 0000 0000"
                     type="text"
+                    value={formValues.cardNumber}
+                    onChange={(event) =>
+                      handleFieldChange("cardNumber", event.target.value)
+                    }
                   />
                   <span className="absolute right-4 top-3.5 material-symbols-outlined text-on-surface-variant">
                     lock
                   </span>
                 </div>
+                {fieldErrors.cardNumber ? (
+                  <p className="text-error text-xs">{fieldErrors.cardNumber}</p>
+                ) : null}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -158,20 +268,44 @@ export default function CheckoutPage() {
                     Expiry Date
                   </label>
                   <input
-                    className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className={`w-full bg-surface-container-lowest border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
+                      fieldErrors.expiryDate
+                        ? "border-error"
+                        : "border-outline-variant"
+                    }`}
                     placeholder="MM/YY"
                     type="text"
+                    value={formValues.expiryDate}
+                    onChange={(event) =>
+                      handleFieldChange("expiryDate", event.target.value)
+                    }
                   />
+                  {fieldErrors.expiryDate ? (
+                    <p className="text-error text-xs">
+                      {fieldErrors.expiryDate}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="space-y-2">
                   <label className="font-label-md text-label-md text-on-surface-variant">
                     CVV
                   </label>
                   <input
-                    className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className={`w-full bg-surface-container-lowest border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
+                      fieldErrors.cvv
+                        ? "border-error"
+                        : "border-outline-variant"
+                    }`}
                     placeholder="123"
                     type="text"
+                    value={formValues.cvv}
+                    onChange={(event) =>
+                      handleFieldChange("cvv", event.target.value)
+                    }
                   />
+                  {fieldErrors.cvv ? (
+                    <p className="text-error text-xs">{fieldErrors.cvv}</p>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -186,10 +320,23 @@ export default function CheckoutPage() {
                     Street Address
                   </label>
                   <input
-                    className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className={`w-full bg-surface-container-lowest border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
+                      fieldErrors.streetAddress
+                        ? "border-error"
+                        : "border-outline-variant"
+                    }`}
                     placeholder="123 Education Lane"
                     type="text"
+                    value={formValues.streetAddress}
+                    onChange={(event) =>
+                      handleFieldChange("streetAddress", event.target.value)
+                    }
                   />
+                  {fieldErrors.streetAddress ? (
+                    <p className="text-error text-xs">
+                      {fieldErrors.streetAddress}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -197,20 +344,44 @@ export default function CheckoutPage() {
                       City
                     </label>
                     <input
-                      className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                      className={`w-full bg-surface-container-lowest border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
+                        fieldErrors.city
+                          ? "border-error"
+                          : "border-outline-variant"
+                      }`}
                       placeholder="San Francisco"
                       type="text"
+                      value={formValues.city}
+                      onChange={(event) =>
+                        handleFieldChange("city", event.target.value)
+                      }
                     />
+                    {fieldErrors.city ? (
+                      <p className="text-error text-xs">{fieldErrors.city}</p>
+                    ) : null}
                   </div>
                   <div className="space-y-2">
                     <label className="font-label-md text-label-md text-on-surface-variant">
                       Postal Code
                     </label>
                     <input
-                      className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                      className={`w-full bg-surface-container-lowest border rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all ${
+                        fieldErrors.postalCode
+                          ? "border-error"
+                          : "border-outline-variant"
+                      }`}
                       placeholder="94103"
                       type="text"
+                      value={formValues.postalCode}
+                      onChange={(event) =>
+                        handleFieldChange("postalCode", event.target.value)
+                      }
                     />
+                    {fieldErrors.postalCode ? (
+                      <p className="text-error text-xs">
+                        {fieldErrors.postalCode}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -279,8 +450,8 @@ export default function CheckoutPage() {
               <button
                 type="button"
                 onClick={handleCompletePurchase}
-                disabled={cartItems.length === 0 || isSubmitting}
-                className="w-full py-4 rounded-xl font-label-md text-label-md text-on-primary shadow-lg transition-transform active:scale-[0.98] flex items-center justify-center gap-2 group bg-linear-to-r from-primary-container to-primary"
+                disabled={!canCompletePurchase}
+                className="w-full py-4 rounded-xl font-label-md text-label-md text-on-primary shadow-lg transition-transform active:scale-[0.98] flex items-center justify-center gap-2 group bg-linear-to-r from-primary-container to-primary disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <span>
                   {isSubmitting ? "Processing..." : "Complete Purchase"}
@@ -289,6 +460,12 @@ export default function CheckoutPage() {
                   arrow_forward
                 </span>
               </button>
+
+              {cartItems.length > 0 && !isCheckoutFormValid ? (
+                <p className="font-body-sm text-body-sm text-error text-center">
+                  Please complete all required fields to continue.
+                </p>
+              ) : null}
 
               <p className="font-body-sm text-body-sm text-on-surface-variant text-center">
                 By clicking "Complete Purchase", you agree to EduFlow&apos;s

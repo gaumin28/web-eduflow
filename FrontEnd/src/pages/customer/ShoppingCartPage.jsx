@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../contexts/CartContext";
+import { useWishlist } from "../../contexts/WishlistContext";
 
 const RECOMMENDATIONS = [
   {
@@ -34,6 +35,7 @@ function formatMoney(value) {
 export default function ShoppingCartPage() {
   const navigate = useNavigate();
   const { cartItems, removeFromCart } = useCart();
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const [removingItemIds, setRemovingItemIds] = useState(new Set());
   const [couponCode, setCouponCode] = useState("");
   const [isCouponApplied, setIsCouponApplied] = useState(false);
@@ -97,6 +99,7 @@ export default function ShoppingCartPage() {
         <div className="lg:col-span-8 space-y-stack-md">
           {cartItems.map((item) => {
             const isRemoving = removingItemIds.has(item.id);
+            const wishlisted = isWishlisted(item.id);
 
             return (
               <article
@@ -171,9 +174,10 @@ export default function ShoppingCartPage() {
                     </div>
                     <button
                       type="button"
+                      onClick={() => toggleWishlist(item.id)}
                       className="text-primary font-label-md text-label-md hover:underline"
                     >
-                      Move to Wishlist
+                      {wishlisted ? "In Wishlist" : "Move to Wishlist"}
                     </button>
                   </div>
                 </div>
