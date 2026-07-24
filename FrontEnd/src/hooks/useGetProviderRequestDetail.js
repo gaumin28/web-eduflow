@@ -5,9 +5,7 @@ const useGetProviderRequestDetail = (providerId) => {
   return useQuery({
     queryKey: ["provider-requests", providerId],
     queryFn: async () => {
-      const res = await api.get(
-        `http://localhost:8080/providers-requests/${providerId}`
-      );
+      const res = await api.get(`/providers-requests/${providerId}`);
       return res.data;
     },
     enabled: !!providerId, // chỉ fetch khi có id

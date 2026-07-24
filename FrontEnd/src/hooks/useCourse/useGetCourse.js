@@ -2,22 +2,20 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../../lib/api";
 
 const useGetCourse = (page, limit, search) => {
-return useQuery({
+  return useQuery({
     queryKey: ["courses", page, limit, search],
     queryFn: async () => {
-    const res = await  api.get("http://localhost:8080/courses-of-provider", {
+      const res = await api.get("/courses-of-provider", {
         params: {
-        page,
-        limit,
-        search
-        }
-    });
-    return res.data;
+          page,
+          limit,
+          search,
+        },
+      });
+      return res.data;
     },
-    keepPreviousData: true
-});
+    keepPreviousData: true,
+  });
 };
 
 export default useGetCourse;
-
-
