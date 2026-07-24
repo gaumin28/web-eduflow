@@ -11,10 +11,10 @@ import {
 } from "../../services/providerService";
 
 const tabs = [
-  { id: "courses", label: "Courses" },
-  { id: "reviews", label: "Reviews" },
-  { id: "about", label: "About" },
-  { id: "resources", label: "Resources" },
+  { id: "courses", label: "Khóa học" },
+  { id: "reviews", label: "Đánh giá" },
+  { id: "about", label: "Giới thiệu" },
+  { id: "resources", label: "Tài nguyên" },
 ];
 
 const DEMO_PROVIDER_EMAIL = "instructor.seed@eduflow.local";
@@ -32,15 +32,15 @@ function formatVnd(value) {
 function formatCourseDuration(course) {
   if (course.duration) return course.duration;
   if (course.total_lectures) {
-    return `${course.total_lectures} lectures`;
+    return `${course.total_lectures} bài học`;
   }
-  return "Self-paced";
+  return "Tự học";
 }
 
 function formatDate(value) {
-  if (!value) return "Recently";
+  if (!value) return "Gần đây";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Recently";
+  if (Number.isNaN(date.getTime())) return "Gần đây";
   return date.toLocaleDateString("vi-VN");
 }
 
@@ -145,7 +145,7 @@ export default function InstructorProfilePage() {
           null;
 
         if (!selectedProvider) {
-          throw new Error("No provider data found in MongoDB");
+          throw new Error("Không tìm thấy dữ liệu giảng viên trong MongoDB");
         }
 
         const { data: courseResponse } = await getProviderCourses(
@@ -174,7 +174,7 @@ export default function InstructorProfilePage() {
         setError(
           fetchError.response?.data?.message ||
             fetchError.message ||
-            "Failed to load instructor data.",
+            "Không thể tải dữ liệu giảng viên.",
         );
       } finally {
         if (alive) setLoading(false);
@@ -224,12 +224,12 @@ export default function InstructorProfilePage() {
         comment: reviewForm.comment,
       });
       await loadProfileContent(provider._id);
-      setReviewMessage("Review saved successfully.");
+      setReviewMessage("Lưu đánh giá thành công.");
     } catch (submitError) {
       setReviewMessage(
         submitError.response?.data?.message ||
           submitError.message ||
-          "Failed to submit review.",
+          "Không thể gửi đánh giá.",
       );
     } finally {
       setReviewSubmitting(false);
@@ -245,7 +245,7 @@ export default function InstructorProfilePage() {
     try {
       await deleteMyCourseReview(courseId);
       await loadProfileContent(provider._id);
-      setReviewMessage("Review deleted successfully.");
+      setReviewMessage("Xóa đánh giá thành công.");
 
       if (String(reviewForm.courseId) === String(courseId)) {
         setReviewForm((prev) => ({
@@ -258,7 +258,7 @@ export default function InstructorProfilePage() {
       setReviewMessage(
         deleteError.response?.data?.message ||
           deleteError.message ||
-          "Failed to delete review.",
+          "Không thể xóa đánh giá.",
       );
     } finally {
       setReviewDeletingCourseId("");
@@ -297,9 +297,9 @@ export default function InstructorProfilePage() {
 
       return {
         id: course._id,
-        badge: course.feature ? "Featured" : null,
+        badge: course.feature ? "Nổi bật" : null,
         title: course.course_title,
-        category: course.category_id?.cate_name || "Course",
+        category: course.category_id?.cate_name || "Khóa học",
         duration: formatCourseDuration(course),
         rating: course.feature ? "4.9" : "4.6",
         reviews: `(${course.students || 0})`,
@@ -323,34 +323,34 @@ export default function InstructorProfilePage() {
     const averageRating = profileContent.summary?.averageRating || 0;
 
     return [
-      { value: totalStudents.toLocaleString("vi-VN"), label: "Total Students" },
-      { value: totalCourses.toString(), label: "Courses" },
+      { value: totalStudents.toLocaleString("vi-VN"), label: "Tổng học viên" },
+      { value: totalCourses.toString(), label: "Khóa học" },
       {
         value: averageRating.toFixed(1),
-        label: "Avg Rating",
+        label: "Đánh giá TB",
         icon: "star",
       },
-      { value: totalReviews.toLocaleString("vi-VN"), label: "Reviews" },
+      { value: totalReviews.toLocaleString("vi-VN"), label: "Đánh giá" },
     ];
   }, [courses, profileContent.summary]);
 
-  const instructorName = provider?.provider_name || "Instructor";
-  const instructorCareer = provider?.career || "Instructor profile";
-  const instructorEmail = provider?.email || "Connected from MongoDB";
+  const instructorName = provider?.provider_name || "Giảng viên";
+  const instructorCareer = provider?.career || "Hồ sơ giảng viên";
+  const instructorEmail = provider?.email || "Kết nối từ MongoDB";
   const instructorProfile =
-    provider?.profile?.trim() || "Instructor profile is not available yet.";
+    provider?.profile?.trim() || "Hồ sơ giảng viên chưa được cập nhật.";
 
   const avatarUrl =
     (Array.isArray(provider?.images) ? provider.images[0] : provider?.images) ||
     "https://lh3.googleusercontent.com/aida-public/AB6AXuAd6iIr3wnF1O2aqEhHFWdARgZBjFD1kNH4FP1tkCz3MUS-Qmk4ljXdCwGwxA2rqvY7iCnIvw7CVp8Ywu3VHvtipk3tJgAMbKwshCC5XloBcG-RuDJ4Ds0E-jEpzwZEwHcdi6D8xQ_IDROcIign-OYdem7ev7KhR_6H1XKg2mL62OejyZsKhDjzITui1C3QLGt9ETnR2w1mg5LglksHepQgE9Ll_4gUE9mufThSHj73nmMZVOrMrIJCo9NXbnbYpzA_30dcYgrRbyU";
 
-  const content = useMemo(() => {
+  const content = (() => {
     if (activeTab === "courses") {
       return (
         <>
           <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <h2 className="font-headline-md text-headline-md text-on-surface">
-              All Courses
+              Tất cả khóa học
             </h2>
             <div className="relative w-full md:w-96">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">
@@ -358,7 +358,7 @@ export default function InstructorProfilePage() {
               </span>
               <input
                 type="text"
-                placeholder="Search courses..."
+                placeholder="Tìm kiếm khóa học..."
                 className="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest border border-outline-variant/30 rounded-xl focus:outline-none focus:border-primary transition-colors font-body-sm text-body-sm"
               />
             </div>
@@ -366,7 +366,7 @@ export default function InstructorProfilePage() {
 
           {mappedCourses.length === 0 ? (
             <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-low p-6 text-on-surface-variant">
-              No courses found for this instructor in MongoDB.
+              Không tìm thấy khóa học nào cho giảng viên này trong MongoDB.
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
@@ -456,7 +456,7 @@ export default function InstructorProfilePage() {
       return (
         <div className="glass-card p-8 rounded-3xl mt-8">
           <h3 className="font-headline-md text-headline-md text-on-surface mb-4">
-            About
+            Giới thiệu
           </h3>
           <p className="text-body-lg text-on-surface-variant leading-relaxed whitespace-pre-line">
             {instructorProfile}
@@ -476,7 +476,7 @@ export default function InstructorProfilePage() {
               className="glass-card p-6 rounded-2xl border border-outline-variant/20 space-y-4"
             >
               <h3 className="font-headline-md text-on-surface">
-                Write a Review
+                Viết đánh giá
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <select
@@ -500,11 +500,11 @@ export default function InstructorProfilePage() {
                   }
                   className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-3 py-2.5"
                 >
-                  <option value="5">5 - Excellent</option>
-                  <option value="4">4 - Good</option>
-                  <option value="3">3 - Average</option>
-                  <option value="2">2 - Fair</option>
-                  <option value="1">1 - Poor</option>
+                  <option value="5">5 - Xuất sắc</option>
+                  <option value="4">4 - Tốt</option>
+                  <option value="3">3 - Trung bình</option>
+                  <option value="2">2 - Khá</option>
+                  <option value="1">1 - Kém</option>
                 </select>
               </div>
               <textarea
@@ -515,7 +515,7 @@ export default function InstructorProfilePage() {
                     comment: event.target.value,
                   }))
                 }
-                placeholder="Share your learning experience..."
+                placeholder="Chia sẻ trải nghiệm học tập của bạn..."
                 rows={3}
                 className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-3 py-2.5"
               />
@@ -526,10 +526,10 @@ export default function InstructorProfilePage() {
                   className="bg-primary text-on-primary px-4 py-2 rounded-xl disabled:opacity-60"
                 >
                   {reviewSubmitting
-                    ? "Saving..."
+                    ? "Đang lưu..."
                     : selectedCourseReview
-                      ? "Update Review"
-                      : "Submit Review"}
+                      ? "Cập nhật đánh giá"
+                      : "Gửi đánh giá"}
                 </button>
                 {selectedCourseReview ? (
                   <button
@@ -539,8 +539,8 @@ export default function InstructorProfilePage() {
                     className="border border-error text-error px-4 py-2 rounded-xl disabled:opacity-60"
                   >
                     {reviewDeletingCourseId === reviewForm.courseId
-                      ? "Deleting..."
-                      : "Delete My Review"}
+                      ? "Đang xóa..."
+                      : "Xóa đánh giá của tôi"}
                   </button>
                 ) : null}
                 {reviewMessage ? (
@@ -554,7 +554,7 @@ export default function InstructorProfilePage() {
 
           {reviewItems.length === 0 ? (
             <div className="glass-card p-8 rounded-3xl text-on-surface-variant">
-              No reviews available yet.
+              Chưa có đánh giá nào.
             </div>
           ) : (
             reviewItems.map((review) => (
@@ -568,7 +568,7 @@ export default function InstructorProfilePage() {
                       {review.reviewer}
                     </h3>
                     <p className="text-[13px] text-on-surface-variant">
-                      Course: {review.courseTitle}
+                      Khóa học: {review.courseTitle}
                     </p>
                   </div>
                   <span className="text-[13px] text-on-surface-variant">
@@ -577,7 +577,7 @@ export default function InstructorProfilePage() {
                 </div>
                 <RatingStars stars={review.rating || 0} />
                 <p className="text-on-surface-variant mt-3 leading-relaxed">
-                  {review.comment || "No review message."}
+                  {review.comment || "Chưa có nội dung đánh giá."}
                 </p>
                 {String(review.userId) === String(currentUserId) ? (
                   <div className="mt-4 flex gap-2">
@@ -589,7 +589,7 @@ export default function InstructorProfilePage() {
                       }}
                       className="text-sm text-primary hover:underline"
                     >
-                      Edit my review
+                      Sửa đánh giá của tôi
                     </button>
                     <button
                       type="button"
@@ -602,8 +602,8 @@ export default function InstructorProfilePage() {
                       className="text-sm text-error hover:underline disabled:opacity-60"
                     >
                       {reviewDeletingCourseId === String(review.courseId)
-                        ? "Deleting..."
-                        : "Delete"}
+                        ? "Đang xóa..."
+                        : "Xóa"}
                     </button>
                   </div>
                 ) : null}
@@ -620,12 +620,10 @@ export default function InstructorProfilePage() {
       return (
         <div className="glass-card p-8 rounded-3xl mt-8">
           <h3 className="font-headline-md text-headline-md text-on-surface mb-4">
-            Resources
+            Tài nguyên
           </h3>
           {resources.length === 0 ? (
-            <p className="text-on-surface-variant">
-              No resources available yet.
-            </p>
+            <p className="text-on-surface-variant">Chưa có tài nguyên nào.</p>
           ) : (
             <div className="space-y-3">
               {resources.map((resource) => (
@@ -637,8 +635,8 @@ export default function InstructorProfilePage() {
                     {resource.title}
                   </p>
                   <p className="text-[13px] text-on-surface-variant mt-1">
-                    {resource.sections} sections • {resource.lectures} lectures
-                    • {resource.duration}
+                    {resource.sections} phần • {resource.lectures} bài học •{" "}
+                    {resource.duration}
                   </p>
                   {resource.overviews?.length ? (
                     <ul className="mt-2 list-disc list-inside text-[13px] text-on-surface-variant space-y-1">
@@ -657,25 +655,10 @@ export default function InstructorProfilePage() {
 
     return (
       <div className="glass-card p-8 rounded-3xl mt-8">
-        <p className="text-on-surface-variant">No content available.</p>
+        <p className="text-on-surface-variant">Không có nội dung.</p>
       </div>
     );
-  }, [
-    activeTab,
-    mappedCourses,
-    instructorProfile,
-    profileContent,
-    user?.role,
-    currentUserId,
-    reviewForm,
-    reviewMessage,
-    reviewSubmitting,
-    reviewDeletingCourseId,
-    addToCart,
-    courses,
-    instructorName,
-    navigate,
-  ]);
+  })();
 
   return (
     <div className="bg-surface font-body-md text-on-surface min-h-screen selection:bg-primary-container selection:text-on-primary-container">
@@ -685,7 +668,7 @@ export default function InstructorProfilePage() {
             <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-primary-container/5 rounded-full blur-3xl" />
             <div className="relative flex flex-col md:flex-row gap-stack-lg items-center md:items-start text-center md:text-left">
               <img
-                alt="Instructor Avatar"
+                alt="Ảnh đại diện giảng viên"
                 className="w-32 h-32 md:w-48 md:h-48 rounded-2xl object-cover border-4 border-white shadow-xl"
                 src={avatarUrl}
               />
@@ -735,10 +718,10 @@ export default function InstructorProfilePage() {
                   <span className="material-symbols-outlined">
                     {isFollowing ? "person_remove" : "person_add"}
                   </span>
-                  {isFollowing ? "Following" : "Follow Instructor"}
+                  {isFollowing ? "Đang theo dõi" : "Theo dõi giảng viên"}
                 </button>
                 <button className="w-full md:w-48 border-2 border-primary text-primary font-label-md text-label-md py-4 rounded-xl hover:bg-primary/5">
-                  Message
+                  Nhắn tin
                 </button>
               </div>
             </div>
@@ -765,7 +748,7 @@ export default function InstructorProfilePage() {
 
           {loading ? (
             <div className="rounded-2xl border border-outline-variant/30 bg-surface-container-low p-6 text-on-surface-variant">
-              Loading instructor data from MongoDB...
+              Đang tải dữ liệu giảng viên từ MongoDB...
             </div>
           ) : error ? (
             <div className="rounded-2xl border border-error/20 bg-error/5 p-6 text-error">
