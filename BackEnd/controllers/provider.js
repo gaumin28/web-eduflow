@@ -1,11 +1,17 @@
 import providerModel from "../models/provider.js";
 import courseModel from "../models/course/course.js";
 import categoryModel from "../models/category.js";
+import courseOverviewModel from "../models/course/courseOverview.js";
+import courseReviewModel from "../models/course/courseReview.js";
+import orderModel from "../models/order.js";
 import { seedCoursesForProvider } from "./coursesOfProviderSeed.js";
-import { createOrUpdateProviderService, updateProviderStatusService } from "../services/provider/providerService.js";
+import {
+  createOrUpdateProviderService,
+  updateProviderStatusService,
+} from "../services/provider/providerService.js";
 import notificationModel from "../models/NotificationModel.js";
 import userModel from "../models/user.js";
-
+import mongoose from "mongoose";
 
 const DEFAULT_TITLES = [
   "Complete {topic} Masterclass",
@@ -88,13 +94,210 @@ export const getProviderCourses = async (req, res) => {
   }
 };
 
+export const getProviderProfileContent = async (req, res) => {
+  try {
+    const { providerId } = req.params;
+
+    const courses = await courseModel
+      .find({ provider_id: providerId })
+      .select(
+        "_id course_title total_sections total_lectures duration createdAt students",
+      )
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const courseIds = courses.map((course) => course._id);
+
+    if (courseIds.length === 0) {
+      return res.status(200).json({
+        message: "Provider profile content loaded successfully",
+        data: {
+          reviews: [],
+          resources: [],
+          summary: {
+            totalReviews: 0,
+            averageRating: 0,
+          },
+        },
+      });
+    }
+
+    const [overviews, reviewDocs] = await Promise.all([
+      courseOverviewModel
+        .find({ course_id: { $in: courseIds } })
+        .select("course_id overview_name")
+        .lean(),
+      courseReviewModel
+        .find({
+          provider_id: providerId,
+          course_id: { $in: courseIds },
+        })
+        .populate({ path: "user_id", select: "username" })
+        .sort({ createdAt: -1 })
+        .lean(),
+    ]);
+
+    const overviewMap = new Map();
+    for (const item of overviews) {
+      const key = item.course_id.toString();
+      if (!overviewMap.has(key)) {
+        overviewMap.set(key, []);
+      }
+      overviewMap.get(key).push(item.overview_name);
+    }
+
+    const courseMap = new Map(
+      courses.map((course) => [course._id.toString(), course]),
+    );
+
+    const resources = courses.map((course) => ({
+      courseId: course._id,
+      title: course.course_title,
+      sections: course.total_sections || 0,
+      lectures: course.total_lectures || 0,
+      duration: course.duration || "Self-paced",
+      overviews: overviewMap.get(course._id.toString()) || [],
+    }));
+
+    const reviews = reviewDocs
+      .map((review) => {
+        const course = courseMap.get(review.course_id?.toString());
+        if (!course) return null;
+
+        return {
+          reviewId: review._id,
+          userId: review.user_id?._id || null,
+          reviewer: review.user_id?.username || "Learner",
+          courseId: course._id,
+          courseTitle: course.course_title,
+          createdAt: review.createdAt,
+          rating: review.rating,
+          comment: review.comment,
+        };
+      })
+      .filter(Boolean);
+
+    const totalReviews = reviews.length;
+    const ratingSum = reviews.reduce(
+      (sum, item) => sum + (Number(item.rating) || 0),
+      0,
+    );
+    const averageRating = totalReviews > 0 ? ratingSum / totalReviews : 0;
+
+    return res.status(200).json({
+      message: "Provider profile content loaded successfully",
+      data: {
+        reviews,
+        resources,
+        summary: {
+          totalReviews,
+          averageRating,
+        },
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const createOrUpdateCourseReview = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const userId = req.user?.userId;
+    const rating = Number(req.body?.rating);
+    const comment = (req.body?.comment || "").trim();
+
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+      return res.status(400).json({ message: "Invalid course id" });
+    }
+
+    if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+      return res
+        .status(400)
+        .json({ message: "Rating must be a number between 1 and 5" });
+    }
+
+    const course = await courseModel
+      .findById(courseId)
+      .select("_id provider_id course_title")
+      .lean();
+
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    const hasPurchased = await orderModel.exists({
+      user: userId,
+      payment_status: "paid",
+      "items.course": courseId,
+    });
+
+    if (!hasPurchased) {
+      return res.status(403).json({
+        message: "You can only review courses that you have purchased",
+      });
+    }
+
+    const review = await courseReviewModel.findOneAndUpdate(
+      { course_id: courseId, user_id: userId },
+      {
+        $set: {
+          provider_id: course.provider_id,
+          rating,
+          comment,
+        },
+      },
+      { new: true, upsert: true, setDefaultsOnInsert: true },
+    );
+
+    return res.status(200).json({
+      message: "Review submitted successfully",
+      data: {
+        reviewId: review._id,
+        userId: review.user_id,
+        courseId: review.course_id,
+        rating: review.rating,
+        comment: review.comment,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteMyCourseReview = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const userId = req.user?.userId;
+
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+      return res.status(400).json({ message: "Invalid course id" });
+    }
+
+    const deleted = await courseReviewModel.findOneAndDelete({
+      course_id: courseId,
+      user_id: userId,
+    });
+
+    if (!deleted) {
+      return res.status(404).json({
+        message: "Review not found for this course",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Review deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const getAdminRequestProvidersDetail = async (req, res) => {
   try {
     const { providerId } = req.params;
 
-    const provider = await providerModel
-      .findById(providerId)
-      .lean(); 
+    const provider = await providerModel.findById(providerId).lean();
 
     if (!provider) {
       return res.status(404).json({
@@ -140,17 +343,16 @@ export const seedProviderCourses = async (req, res) => {
   }
 };
 
-
-
-
-
-
 export const createProvider = async (req, res) => {
   try {
-    const { isNew, data } = await createOrUpdateProviderService(req.user.userId, req.body, req.files);
-    
+    const { isNew, data } = await createOrUpdateProviderService(
+      req.user.userId,
+      req.body,
+      req.files,
+    );
+
     const newNotification = await notificationModel.create({
-      sender: req.user.userId, 
+      sender: req.user.userId,
       title: "Hồ sơ đăng ký mới",
       content: `Có một yêu cầu đăng ký làm đối tác mới đang chờ bạn duyệt.`,
       type: "registration",
@@ -158,24 +360,26 @@ export const createProvider = async (req, res) => {
     });
 
     // Đi kèm thông tin người gửi (avatar, tên) để hiển thị lên chuông
-    const populatedNoti = await newNotification.populate("sender", "name email avatar");
+    const populatedNoti = await newNotification.populate(
+      "sender",
+      "name email avatar",
+    );
 
     // Bắn Real-time phát một qua Socket đến Admin
     if (req.io) {
-      req.io.to("admin-room").emit("new_notification", populatedNoti); 
+      req.io.to("admin-room").emit("new_notification", populatedNoti);
     }
 
     return res.status(isNew ? 201 : 200).json({
       message: "Gửi đăng ký thành công, vui lòng chờ admin duyệt",
-      data
+      data,
     });
   } catch (error) {
     return res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
 
-
-// Lấy thông tin yêu cầu trở thành giảng viên của người dùng 
+// Lấy thông tin yêu cầu trở thành giảng viên của người dùng
 
 export const getAdminRequestProviders = async (req, res) => {
   try {
@@ -189,9 +393,10 @@ export const getAdminRequestProviders = async (req, res) => {
 
     const parsedPage = parseInt(page, 10);
     const parsedLimit = parseInt(limit, 10);
-    
+
     const pageNum = !isNaN(parsedPage) && parsedPage > 0 ? parsedPage : 1;
-    const limitNum = !isNaN(parsedLimit) && parsedLimit > 0 ? Math.min(50, parsedLimit) : 10;
+    const limitNum =
+      !isNaN(parsedLimit) && parsedLimit > 0 ? Math.min(50, parsedLimit) : 10;
     const skip = (pageNum - 1) * limitNum;
 
     // 2. QUERY DỮ LIỆU
@@ -202,7 +407,7 @@ export const getAdminRequestProviders = async (req, res) => {
         .skip(skip)
         .limit(limitNum)
         .lean(),
-        
+
       providerModel.countDocuments(filter),
     ]);
 
@@ -221,45 +426,47 @@ export const getAdminRequestProviders = async (req, res) => {
   }
 };
 
-
 // Duyệt hồ sơ ng dùng đăng ký trở thành nhà cung cấp
 
 export const updateProviderStatus = async (req, res) => {
   try {
     const { providerId } = req.params;
-    const { status } = req.body; 
-    const adminId = req.user.userId; 
+    const { status } = req.body;
+    const adminId = req.user.userId;
 
     if (!["approved"].includes(status)) {
-      return res.status(400).json({ message: "Trạng thái phê duyệt không hợp lệ!" });
+      return res
+        .status(400)
+        .json({ message: "Trạng thái phê duyệt không hợp lệ!" });
     }
 
     const updatedProvider = await updateProviderStatusService(
-      providerId, 
-      status, 
-      adminId
+      providerId,
+      status,
+      adminId,
     );
 
     // TẠO THÔNG BÁO DUYỆT THÀNH CÔNG
     const newNotification = await notificationModel.create({
       sender: adminId,
-      receiver: updatedProvider.user_id, 
+      receiver: updatedProvider.user_id,
       title: "Hồ sơ đăng ký đối tác đã được duyệt",
       content: `Chúc mừng bạn! Hồ sơ đăng ký làm đối tác [${updatedProvider.provider_name}] đã được phê duyệt thành công.`,
       type: "approved",
-      link: "/user/register-provider" 
+      link: "/user/register-provider",
     });
 
     // Bắn Real-time phát một qua Socket đến riêng Học viên đó
     if (req.io && updatedProvider.user_id) {
-      req.io.to(updatedProvider.user_id.toString()).emit("new_notification", newNotification); 
+      req.io
+        .to(updatedProvider.user_id.toString())
+        .emit("new_notification", newNotification);
     }
 
     return res.status(200).json({
       message: `Đã duyệt hồ sơ ${updatedProvider.provider_name}!`,
       data: updatedProvider,
     });
-
   } catch (error) {
     return res.status(error.statusCode || 500).json({ message: error.message });
   }
@@ -270,22 +477,22 @@ export const updateProviderStatus = async (req, res) => {
 export const rejectProviderRequest = async (req, res) => {
   try {
     const { providerId } = req.params;
-    const { rejection_reason } = req.body;  
+    const { rejection_reason } = req.body;
 
     if (!rejection_reason || rejection_reason.trim() === "") {
-      return res.status(400).json({ 
-        message: "Vui lòng nhập lý do từ chối hồ sơ!" 
+      return res.status(400).json({
+        message: "Vui lòng nhập lý do từ chối hồ sơ!",
       });
     }
 
     const updatedProvider = await providerModel.findByIdAndUpdate(
       providerId,
-      { 
-        status: "rejected",             
-        rejection_reason: rejection_reason,  
-        approved_by: req.user.userId     
+      {
+        status: "rejected",
+        rejection_reason: rejection_reason,
+        approved_by: req.user.userId,
       },
-      { new: true }
+      { new: true },
     );
 
     if (!updatedProvider) {
@@ -294,17 +501,19 @@ export const rejectProviderRequest = async (req, res) => {
 
     // THÔNG BÁO TỪ CHỐI KÈM LÝ DO
     const newNotification = await notificationModel.create({
-      sender: req.user.userId, 
-      receiver: updatedProvider.user_id,  
+      sender: req.user.userId,
+      receiver: updatedProvider.user_id,
       title: "Yêu cầu đăng ký đối tác bị từ chối",
       content: `Rất tiếc, hồ sơ đối tác của bạn đã bị từ chối. Lý do: ${rejection_reason}`,
       type: "rejected",
-      link: "/user/register-provider" 
+      link: "/user/register-provider",
     });
 
     // Bắn Real-time phát một qua Socket đến riêng Học viên đó
     if (req.io && updatedProvider.user_id) {
-      req.io.to(updatedProvider.user_id.toString()).emit("new_notification", newNotification); 
+      req.io
+        .to(updatedProvider.user_id.toString())
+        .emit("new_notification", newNotification);
     }
 
     return res.status(200).json({
@@ -315,7 +524,6 @@ export const rejectProviderRequest = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 //  Lấy hồ sơ đăng ký của người dùng
 
@@ -329,12 +537,12 @@ export const getMyProviderRequest = async (req, res) => {
     // Trả về data (có thể là Object hồ sơ hoặc null nếu chưa từng đăng ký)
     return res.status(200).json({
       success: true,
-      data: providerRequest, 
+      data: providerRequest,
     });
   } catch (error) {
-    return res.status(500).json({ 
-      success: false, 
-      message: error.message 
+    return res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };

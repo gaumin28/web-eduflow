@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import {
+  deleteMyCourseReview,
   getProviderCourses,
+  getProviderProfileContent,
   getProviders,
+  submitCourseReview,
 } from "../../services/providerService";
 
 const tabs = [
@@ -30,6 +34,17 @@ function formatCourseDuration(course) {
     return `${course.total_lectures} lectures`;
   }
   return "Self-paced";
+}
+
+function formatDate(value) {
+  if (!value) return "Recently";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Recently";
+  return date.toLocaleDateString("vi-VN");
+}
+
+function getEntityId(entity) {
+  return entity?._id || entity?.id || entity?.userId || "";
 }
 
 function RatingStars({ stars }) {
@@ -69,6 +84,7 @@ function RatingStars({ stars }) {
 }
 
 export default function InstructorProfilePage() {
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("courses");
   const [isFollowing, setIsFollowing] = useState(false);
@@ -76,6 +92,36 @@ export default function InstructorProfilePage() {
   const [error, setError] = useState("");
   const [provider, setProvider] = useState(null);
   const [courses, setCourses] = useState([]);
+  const [profileContent, setProfileContent] = useState({
+    reviews: [],
+    resources: [],
+    summary: {
+      totalReviews: 0,
+      averageRating: 0,
+    },
+  });
+  const [reviewForm, setReviewForm] = useState({
+    courseId: "",
+    rating: "5",
+    comment: "",
+  });
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewDeletingCourseId, setReviewDeletingCourseId] = useState("");
+  const [reviewMessage, setReviewMessage] = useState("");
+
+  const currentUserId = getEntityId(user);
+
+  const loadProfileContent = async (providerId) => {
+    const { data: profileContentResponse } =
+      await getProviderProfileContent(providerId);
+    setProfileContent(
+      profileContentResponse?.data ?? {
+        reviews: [],
+        resources: [],
+        summary: { totalReviews: 0, averageRating: 0 },
+      },
+    );
+  };
 
   useEffect(() => {
     let alive = true;
@@ -106,11 +152,22 @@ export default function InstructorProfilePage() {
         if (!alive) return;
 
         setProvider(selectedProvider);
-        setCourses(courseResponse?.data ?? []);
+        const nextCourses = courseResponse?.data ?? [];
+        setCourses(nextCourses);
+        setReviewForm((prev) => ({
+          ...prev,
+          courseId: prev.courseId || nextCourses[0]?._id || "",
+        }));
+        await loadProfileContent(selectedProvider._id);
       } catch (fetchError) {
         if (!alive) return;
         setProvider(null);
         setCourses([]);
+        setProfileContent({
+          reviews: [],
+          resources: [],
+          summary: { totalReviews: 0, averageRating: 0 },
+        });
         setError(
           fetchError.response?.data?.message ||
             fetchError.message ||
@@ -127,6 +184,83 @@ export default function InstructorProfilePage() {
       alive = false;
     };
   }, [searchParams]);
+
+  const reviewItems = profileContent.reviews || [];
+
+  const findMyReviewByCourse = (courseId) => {
+    return (
+      reviewItems.find(
+        (review) =>
+          String(review.courseId) === String(courseId) &&
+          String(review.userId) === String(currentUserId),
+      ) || null
+    );
+  };
+
+  const handleCourseChange = (courseId) => {
+    const myReview = findMyReviewByCourse(courseId);
+
+    setReviewForm({
+      courseId,
+      rating: String(myReview?.rating || "5"),
+      comment: myReview?.comment || "",
+    });
+    setReviewMessage("");
+  };
+
+  const handleSubmitReview = async (event) => {
+    event.preventDefault();
+    if (!reviewForm.courseId || !provider?._id) return;
+
+    setReviewSubmitting(true);
+    setReviewMessage("");
+
+    try {
+      await submitCourseReview(reviewForm.courseId, {
+        rating: Number(reviewForm.rating),
+        comment: reviewForm.comment,
+      });
+      await loadProfileContent(provider._id);
+      setReviewMessage("Review saved successfully.");
+    } catch (submitError) {
+      setReviewMessage(
+        submitError.response?.data?.message ||
+          submitError.message ||
+          "Failed to submit review.",
+      );
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
+
+  const handleDeleteReview = async (courseId) => {
+    if (!provider?._id || !courseId) return;
+
+    setReviewDeletingCourseId(courseId);
+    setReviewMessage("");
+
+    try {
+      await deleteMyCourseReview(courseId);
+      await loadProfileContent(provider._id);
+      setReviewMessage("Review deleted successfully.");
+
+      if (String(reviewForm.courseId) === String(courseId)) {
+        setReviewForm((prev) => ({
+          ...prev,
+          rating: "5",
+          comment: "",
+        }));
+      }
+    } catch (deleteError) {
+      setReviewMessage(
+        deleteError.response?.data?.message ||
+          deleteError.message ||
+          "Failed to delete review.",
+      );
+    } finally {
+      setReviewDeletingCourseId("");
+    }
+  };
 
   const mappedCourses = useMemo(() => {
     return courses.map((course, index) => {
@@ -160,22 +294,20 @@ export default function InstructorProfilePage() {
       (sum, course) => sum + (course.students || 0),
       0,
     );
-    const totalReviews = courses.reduce(
-      (sum, course) => sum + (course.students || 0),
-      0,
-    );
+    const totalReviews = profileContent.summary?.totalReviews || 0;
+    const averageRating = profileContent.summary?.averageRating || 0;
 
     return [
       { value: totalStudents.toLocaleString("vi-VN"), label: "Total Students" },
       { value: totalCourses.toString(), label: "Courses" },
       {
-        value: totalCourses > 0 ? "4.8" : "0.0",
+        value: averageRating.toFixed(1),
         label: "Avg Rating",
         icon: "star",
       },
       { value: totalReviews.toLocaleString("vi-VN"), label: "Reviews" },
     ];
-  }, [courses]);
+  }, [courses, profileContent.summary]);
 
   const instructorName = provider?.provider_name || "Instructor";
   const instructorCareer = provider?.career || "Instructor profile";
@@ -292,17 +424,213 @@ export default function InstructorProfilePage() {
       );
     }
 
+    if (activeTab === "reviews") {
+      const selectedCourseReview = findMyReviewByCourse(reviewForm.courseId);
+
+      return (
+        <div className="space-y-4 mt-8">
+          {user?.role === "customer" ? (
+            <form
+              onSubmit={handleSubmitReview}
+              className="glass-card p-6 rounded-2xl border border-outline-variant/20 space-y-4"
+            >
+              <h3 className="font-headline-md text-on-surface">
+                Write a Review
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <select
+                  value={reviewForm.courseId}
+                  onChange={(event) => handleCourseChange(event.target.value)}
+                  className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-3 py-2.5"
+                >
+                  {mappedCourses.map((course) => (
+                    <option key={course.id} value={course.id}>
+                      {course.title}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={reviewForm.rating}
+                  onChange={(event) =>
+                    setReviewForm((prev) => ({
+                      ...prev,
+                      rating: event.target.value,
+                    }))
+                  }
+                  className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-3 py-2.5"
+                >
+                  <option value="5">5 - Excellent</option>
+                  <option value="4">4 - Good</option>
+                  <option value="3">3 - Average</option>
+                  <option value="2">2 - Fair</option>
+                  <option value="1">1 - Poor</option>
+                </select>
+              </div>
+              <textarea
+                value={reviewForm.comment}
+                onChange={(event) =>
+                  setReviewForm((prev) => ({
+                    ...prev,
+                    comment: event.target.value,
+                  }))
+                }
+                placeholder="Share your learning experience..."
+                rows={3}
+                className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-3 py-2.5"
+              />
+              <div className="flex items-center gap-3">
+                <button
+                  type="submit"
+                  disabled={reviewSubmitting || mappedCourses.length === 0}
+                  className="bg-primary text-on-primary px-4 py-2 rounded-xl disabled:opacity-60"
+                >
+                  {reviewSubmitting
+                    ? "Saving..."
+                    : selectedCourseReview
+                      ? "Update Review"
+                      : "Submit Review"}
+                </button>
+                {selectedCourseReview ? (
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteReview(reviewForm.courseId)}
+                    disabled={reviewDeletingCourseId === reviewForm.courseId}
+                    className="border border-error text-error px-4 py-2 rounded-xl disabled:opacity-60"
+                  >
+                    {reviewDeletingCourseId === reviewForm.courseId
+                      ? "Deleting..."
+                      : "Delete My Review"}
+                  </button>
+                ) : null}
+                {reviewMessage ? (
+                  <span className="text-sm text-on-surface-variant">
+                    {reviewMessage}
+                  </span>
+                ) : null}
+              </div>
+            </form>
+          ) : null}
+
+          {reviewItems.length === 0 ? (
+            <div className="glass-card p-8 rounded-3xl text-on-surface-variant">
+              No reviews available yet.
+            </div>
+          ) : (
+            reviewItems.map((review) => (
+              <article
+                key={review.reviewId}
+                className="glass-card p-6 rounded-2xl border border-outline-variant/20"
+              >
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div>
+                    <h3 className="font-label-md text-label-md text-on-surface">
+                      {review.reviewer}
+                    </h3>
+                    <p className="text-[13px] text-on-surface-variant">
+                      Course: {review.courseTitle}
+                    </p>
+                  </div>
+                  <span className="text-[13px] text-on-surface-variant">
+                    {formatDate(review.createdAt)}
+                  </span>
+                </div>
+                <RatingStars stars={review.rating || 0} />
+                <p className="text-on-surface-variant mt-3 leading-relaxed">
+                  {review.comment || "No review message."}
+                </p>
+                {String(review.userId) === String(currentUserId) ? (
+                  <div className="mt-4 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleCourseChange(String(review.courseId));
+                        setActiveTab("reviews");
+                      }}
+                      className="text-sm text-primary hover:underline"
+                    >
+                      Edit my review
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleDeleteReview(String(review.courseId))
+                      }
+                      disabled={
+                        reviewDeletingCourseId === String(review.courseId)
+                      }
+                      className="text-sm text-error hover:underline disabled:opacity-60"
+                    >
+                      {reviewDeletingCourseId === String(review.courseId)
+                        ? "Deleting..."
+                        : "Delete"}
+                    </button>
+                  </div>
+                ) : null}
+              </article>
+            ))
+          )}
+        </div>
+      );
+    }
+
+    if (activeTab === "resources") {
+      const resources = profileContent.resources || [];
+
+      return (
+        <div className="glass-card p-8 rounded-3xl mt-8">
+          <h3 className="font-headline-md text-headline-md text-on-surface mb-4">
+            Resources
+          </h3>
+          {resources.length === 0 ? (
+            <p className="text-on-surface-variant">
+              No resources available yet.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {resources.map((resource) => (
+                <div
+                  key={resource.courseId}
+                  className="rounded-xl border border-outline-variant/20 p-4 bg-surface-container-low"
+                >
+                  <p className="font-label-md text-on-surface">
+                    {resource.title}
+                  </p>
+                  <p className="text-[13px] text-on-surface-variant mt-1">
+                    {resource.sections} sections • {resource.lectures} lectures
+                    • {resource.duration}
+                  </p>
+                  {resource.overviews?.length ? (
+                    <ul className="mt-2 list-disc list-inside text-[13px] text-on-surface-variant space-y-1">
+                      {resource.overviews.slice(0, 3).map((item, index) => (
+                        <li key={`${resource.courseId}-ov-${index}`}>{item}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
     return (
       <div className="glass-card p-8 rounded-3xl mt-8">
-        <h3 className="font-headline-md text-headline-md text-on-surface mb-3">
-          {activeTab === "reviews" ? "Learner Reviews" : "Resources"}
-        </h3>
-        <p className="text-on-surface-variant">
-          This section can be connected to API data later.
-        </p>
+        <p className="text-on-surface-variant">No content available.</p>
       </div>
     );
-  }, [activeTab, mappedCourses, instructorProfile]);
+  }, [
+    activeTab,
+    mappedCourses,
+    instructorProfile,
+    profileContent,
+    user?.role,
+    currentUserId,
+    reviewForm,
+    reviewMessage,
+    reviewSubmitting,
+    reviewDeletingCourseId,
+  ]);
 
   return (
     <div className="bg-surface font-body-md text-on-surface min-h-screen selection:bg-primary-container selection:text-on-primary-container">
