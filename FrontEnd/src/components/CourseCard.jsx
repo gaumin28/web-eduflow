@@ -160,12 +160,21 @@ export default function CourseCard({ course }) {
                 </span>
               )}
           </div>
-          <button
-            className="material-symbols-outlined text-outline hover:text-error transition-colors"
-            style={{ fontVariationSettings: "'FILL' 0" }}
-          >
-            favorite
-          </button>
+          {user?.role === "customer" && (
+            <button
+              type="button"
+              onClick={handleWishlist}
+              className="material-symbols-outlined text-outline hover:text-error transition-colors"
+              style={{
+                fontVariationSettings: wishlisted ? "'FILL' 1" : "'FILL' 0",
+              }}
+              aria-label={
+                wishlisted ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"
+              }
+            >
+              favorite
+            </button>
+          )}
         </div>
       </div>
     </div>
