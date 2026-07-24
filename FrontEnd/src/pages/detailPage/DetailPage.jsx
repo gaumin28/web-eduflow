@@ -368,7 +368,7 @@ const CourseDetailPage = () => {
                     {course.course.provider_name}
                   </h3>
                   <p className="text-on-surface-variant text-sm mt-1">
-                    Senior Product Design Lead @ TechNexus
+                    {course.course.provider_career || "Giảng viên tại EduFlow"}
                   </p>
                 </div>
                 <div className="flex gap-8 items-start">
@@ -421,10 +421,8 @@ const CourseDetailPage = () => {
                   </div>
                 </div>
                 <p className="text-sm text-on-surface-variant leading-relaxed mt-2">
-                  Marcus has spent the last 15 years leading design teams at
-                  Fortune 500 companies and high-growth startups. His work
-                  focuses on making complex software feel invisible, allowing
-                  users to achieve their goals with zero friction.
+                  {course.course.provider_description ||
+                    "Giảng viên chưa cập nhật mô tả."}
                 </p>
               </div>
             </section>

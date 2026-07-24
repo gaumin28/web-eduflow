@@ -13,7 +13,7 @@ export const getCourseDetail = async (courseId) => {
   const course = await courseModel
     .findById(courseId)
     .populate("category_id", "cate_name")
-    .populate("provider_id", "provider_name avatar")
+    .populate("provider_id", "provider_name avatar career description")
     .lean();
 
   if (!course) return null;
@@ -58,6 +58,8 @@ export const getCourseDetail = async (courseId) => {
       provider_id: course.provider_id?._id,
       provider_name: course.provider_id?.provider_name,
       provider_avatar: course.provider_id?.avatar ?? "",
+      provider_career: course.provider_id?.career ?? "",
+      provider_description: course.provider_id?.description ?? "",
     },
     requests,
     overviews,
@@ -78,7 +80,7 @@ export const getCourseLearningDetail = async (userId, courseId) => {
   const course = await courseModel
     .findById(courseId)
     .populate("category_id", "cate_name")
-    .populate("provider_id", "provider_name avatar")
+    .populate("provider_id", "provider_name avatar career description")
     .lean();
 
   if (!course) {
@@ -164,6 +166,8 @@ export const getCourseLearningDetail = async (userId, courseId) => {
       provider_id: course.provider_id?._id,
       provider_name: course.provider_id?.provider_name,
       provider_avatar: course.provider_id?.avatar ?? "",
+      provider_career: course.provider_id?.career ?? "",
+      provider_description: course.provider_id?.description ?? "",
     },
 
     progress: {
