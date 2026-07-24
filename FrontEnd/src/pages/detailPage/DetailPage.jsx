@@ -38,6 +38,13 @@ const CourseDetailPage = () => {
     navigate(`/courses-provider?providerId=${providerId}`);
   };
 
+  const instructorAvatar =
+    course?.course?.provider_avatar ||
+    (Array.isArray(course?.course?.provider_images)
+      ? course.course.provider_images[0]
+      : course?.course?.provider_images) ||
+    "https://placehold.co/200x200/e5e7eb/6b7280?text=Avatar";
+
   //Hiệu ứng xuất hiện mượt mà khi scroll (Scroll Reveal)
   useEffect(() => {
     if (!course) return;
@@ -376,10 +383,7 @@ const CourseDetailPage = () => {
                     alt={course.course.provider_name || "Giảng viên"}
                     className="w-28 h-28 rounded-full object-cover shadow-sm cursor-pointer"
                     onClick={handleOpenInstructorProfile}
-                    src={
-                      course.course.provider_avatar ||
-                      "https://placehold.co/200x200/e5e7eb/6b7280?text=Avatar"
-                    }
+                    src={instructorAvatar}
                   />
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-2 text-sm">
