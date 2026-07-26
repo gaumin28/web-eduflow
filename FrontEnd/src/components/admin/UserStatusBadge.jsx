@@ -14,7 +14,7 @@ export default function UserStatusBadge({ isActive }) {
           active ? "bg-green-600" : "bg-error"
         }`}
       />
-      {active ? "Active" : "Locked"}
+      {active ? "Đang hoạt động" : "Đã khóa"}
     </span>
   );
 }

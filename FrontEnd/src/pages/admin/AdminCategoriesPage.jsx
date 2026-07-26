@@ -12,8 +12,8 @@ import Pagination from "../../components/ui/Pagination";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "Tất cả trạng thái" },
-  { value: "active", label: "Active" },
-  { value: "inactive", label: "Inactive" },
+  { value: "active", label: "Đang hoạt động" },
+  { value: "inactive", label: "Không hoạt động" },
 ];
 const LIMIT_OPTIONS = [5, 10, 20];
 
@@ -219,7 +219,7 @@ export default function AdminCategoriesPage() {
               category
             </span>
             <span className="font-label-sm text-label-sm uppercase">
-              Category Management
+              Quản lý danh mục
             </span>
           </div>
           <h2 className="font-headline-lg text-headline-lg text-on-surface">
@@ -427,7 +427,9 @@ export default function AdminCategoriesPage() {
                         <span
                           className={`text-[12px] font-bold ${cat.isActive !== false ? "text-green-600" : "text-on-surface-variant"}`}
                         >
-                          {cat.isActive !== false ? "Active" : "Inactive"}
+                          {cat.isActive !== false
+                            ? "Đang hoạt động"
+                            : "Không hoạt động"}
                         </span>
                       </div>
                     </td>

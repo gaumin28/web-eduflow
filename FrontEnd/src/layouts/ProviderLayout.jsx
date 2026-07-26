@@ -4,51 +4,54 @@ import { Modal } from "antd";
 import { Outlet } from "react-router-dom";
 
 const MENU_ITEMS = [
-  { icon: "dashboard", label: "Dashboard", to: "/provider", end: true },
-  { icon: "school", label: "My Courses", to: "/provider/courses" },
+  { icon: "dashboard", label: "Bảng điều khiển", to: "/provider", end: true },
+  { icon: "school", label: "Khóa học của tôi", to: "/provider/courses" },
   // { icon: "co_present", label: "Providers", to: "#", disabled: true },
   // { icon: "category", label: "Categories", to: "#", disabled: true },
-  { icon: "settings", label: "Settings", to: "/provider/settings" },
+  { icon: "settings", label: "Cài đặt", to: "/provider/settings" },
 ];
 
-const ProviderLayout = ({title= "Nhà cung cấp"}) =>{
+const ProviderLayout = ({ title = "Bảng điều khiển giảng viên" }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const username = user?.username || user?.fullName || user?.email || "Provider";
+  const username =
+    user?.username || user?.fullName || user?.email || "Giảng viên";
+  const roleLabel =
+    user?.role === "admin"
+      ? "Quản trị viên"
+      : user?.role === "provider"
+        ? "Giảng viên"
+        : user?.role === "customer"
+          ? "Học viên"
+          : "Giảng viên";
 
- 
-  
-  
-const handleLogout = () => {
-  Modal.confirm({
-    title: "Xác nhận đăng xuất",
-    content: "Bạn có chắc muốn đăng xuất không?",
-    okText: "Đăng xuất",
-    cancelText: "Hủy",
-    okType: "danger",
-    onOk: async () => {
-      await logout();
-      navigate("/login");
-    },
-  });
-};
-
-
+  const handleLogout = () => {
+    Modal.confirm({
+      title: "Xác nhận đăng xuất",
+      content: "Bạn có chắc muốn đăng xuất không?",
+      okText: "Đăng xuất",
+      cancelText: "Hủy",
+      okType: "danger",
+      onOk: async () => {
+        await logout();
+        navigate("/login");
+      },
+    });
+  };
 
   return (
     <div className="min-h-screen bg-surface text-on-surface">
-      
       <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col gap-[16px] bg-surface-container-low py-[32px] shadow-md">
         <div className="mb-8 px-6">
           <Link
-            to="/admin/dashboard"
+            to="/provider"
             className="font-headline-md text-headline-md font-bold text-primary"
           >
             EduFlow
           </Link>
           <p className="mt-1 text-xs text-on-surface-variant">
-            Provider management
+            Quản lý giảng viên
           </p>
         </div>
 
@@ -59,7 +62,7 @@ const handleLogout = () => {
               <div
                 key={label}
                 className="flex cursor-not-allowed items-center gap-3 px-4 py-3 font-label-md text-label-md text-on-surface-variant/45"
-                title="Coming soon"
+                title="Sắp ra mắt"
               >
                 <span className="material-symbols-outlined">{icon}</span>
                 <span>{label}</span>
@@ -80,7 +83,7 @@ const handleLogout = () => {
                 <span className="material-symbols-outlined">{icon}</span>
                 <span>{label}</span>
               </NavLink>
-            )
+            ),
           )}
         </nav>
 
@@ -96,7 +99,7 @@ const handleLogout = () => {
                   {username}
                 </p>
                 <p className="text-xs capitalize text-on-surface-variant">
-                  {user?.role || "provider"}
+                  {roleLabel}
                 </p>
               </div>
             </div>
@@ -105,7 +108,7 @@ const handleLogout = () => {
               to="/provider/settings"
               className="block w-full rounded-lg bg-primary py-2 text-center font-label-sm text-label-sm text-on-primary transition-opacity hover:opacity-90"
             >
-              Manage Users
+              Cài đặt tài khoản
             </Link>
           </div>
 
@@ -115,7 +118,7 @@ const handleLogout = () => {
             className="flex w-full items-center gap-3 px-4 py-3 font-label-md text-label-md cursor-pointer text-on-surface-variant transition-colors hover:text-error"
           >
             <span className="material-symbols-outlined">logout</span>
-            <span>Logout</span>
+            <span>Đăng xuất</span>
           </button>
         </div>
       </aside>
@@ -133,7 +136,7 @@ const handleLogout = () => {
               </span>
               <input
                 className="w-full rounded-full border border-outline-variant/50 bg-surface-container-low py-2 pl-10 pr-4 text-body-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-                placeholder="Global system search..."
+                placeholder="Tìm kiếm toàn hệ thống..."
                 type="text"
               />
             </div>
@@ -151,7 +154,7 @@ const handleLogout = () => {
                   {username}
                 </p>
                 <p className="text-xs capitalize text-on-surface-variant">
-                  {user?.role || "provider"}
+                  {roleLabel}
                 </p>
               </div>
 
@@ -168,7 +171,6 @@ const handleLogout = () => {
       </main>
     </div>
   );
-}
-
+};
 
 export default ProviderLayout;

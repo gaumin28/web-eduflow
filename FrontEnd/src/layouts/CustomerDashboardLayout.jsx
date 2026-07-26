@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
 import { Outlet } from "react-router-dom";
 import { Avatar, Modal } from "antd";
-import {SolutionOutlined} from "@ant-design/icons";
+import { SolutionOutlined } from "@ant-design/icons";
 import NotificationBell from "../components/NotificationBell/NotificationBell";
 const NAV_ITEMS = [
   {
@@ -69,7 +69,7 @@ const CustomerDashboardLayout = () => {
               type="button"
               className="relative p-2 text-on-surface-variant hover:bg-surface-container transition-colors rounded-full"
               onClick={() => navigate("/cart")}
-              aria-label={`Shopping cart with ${itemCount} item${itemCount === 1 ? "" : "s"}`}
+              aria-label={`Giỏ hàng có ${itemCount} sản phẩm`}
             >
               <span className="material-symbols-outlined">shopping_cart</span>
               {itemCount > 0 ? (
@@ -89,18 +89,18 @@ const CustomerDashboardLayout = () => {
 
       <div className="flex pt-16 min-h-screen">
         {/* Sidebar */}
-        <aside className="fixed left-0 top-0 h-screen w-[300px] bg-surface pt-20 pb-stack-lg flex-col gap-stack-md border-r border-outline-variant/30 hidden lg:flex">
+        <aside className="fixed left-0 top-0 h-screen w-75 bg-surface pt-20 pb-stack-lg flex-col gap-stack-md border-r border-outline-variant/30 hidden lg:flex">
           <div className="px-6 mb-stack-md">
             <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low">
-              <div className="max-w-[50px] w-full aspect-square px-2 h-auto rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+              <div className="max-w-12.5 w-full aspect-square px-2 h-auto rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
                 {user?.username?.charAt(0).toUpperCase()}
               </div>
               <div>
                 <p className="font-label-md text-label-md text-on-surface">
-                  {user?.username ?? "User"}
+                  {user?.username ?? "Người dùng"}
                 </p>
                 <p className="font-body-sm text-[11px] text-on-surface-variant">
-                  {user?.email ?? "Email"}
+                  {user?.email ?? "Chưa có email"}
                 </p>
               </div>
             </div>
@@ -140,7 +140,7 @@ const CustomerDashboardLayout = () => {
               className="flex items-center gap-3 w-full px-4 py-3 mt-4 text-error font-label-md hover:bg-error-container/10 rounded-xl transition-all"
             >
               <span className="material-symbols-outlined">logout</span>
-              Logout
+              Đăng xuất
             </button>
           </div>
         </aside>
@@ -154,12 +154,12 @@ const CustomerDashboardLayout = () => {
       {/* Mobile Bottom Nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-outline-variant/30 flex justify-around py-3 px-4 z-50 shadow-lg">
         {[
-          { icon: "dashboard", label: "Home", active: true },
-          { icon: "school", label: "Courses", active: false },
-          { icon: "favorite", label: "Saved", active: false },
-          { icon: "person", label: "Profile", active: false },
-          { icon: "help", label: "Help", active: false },
-          { icon: "settings", label: "Settings", active: false },
+          { icon: "dashboard", label: "Trang chủ", active: true },
+          { icon: "school", label: "Khóa học", active: false },
+          { icon: "favorite", label: "Đã lưu", active: false },
+          { icon: "person", label: "Hồ sơ", active: false },
+          { icon: "help", label: "Trợ giúp", active: false },
+          { icon: "settings", label: "Cài đặt", active: false },
         ].map(({ icon, label, active }) => (
           <a
             key={label}

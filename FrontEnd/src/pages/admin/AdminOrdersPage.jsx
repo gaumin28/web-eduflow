@@ -4,19 +4,19 @@ import Pagination from "../../components/ui/Pagination";
 import { getAdminOrders } from "../../services/adminOrderService";
 
 const PAYMENT_STATUS_OPTIONS = [
-  { value: "", label: "Payment: All" },
-  { value: "pending", label: "Payment: Pending" },
-  { value: "paid", label: "Payment: Paid" },
-  { value: "failed", label: "Payment: Failed" },
-  { value: "refunded", label: "Payment: Refunded" },
+  { value: "", label: "Thanh toán: Tất cả" },
+  { value: "pending", label: "Thanh toán: Chờ xử lý" },
+  { value: "paid", label: "Thanh toán: Đã thanh toán" },
+  { value: "failed", label: "Thanh toán: Thất bại" },
+  { value: "refunded", label: "Thanh toán: Đã hoàn tiền" },
 ];
 
 const ORDER_STATUS_OPTIONS = [
-  { value: "", label: "Order: All" },
-  { value: "pending", label: "Order: Pending" },
-  { value: "processing", label: "Order: Processing" },
-  { value: "completed", label: "Order: Completed" },
-  { value: "cancelled", label: "Order: Cancelled" },
+  { value: "", label: "Đơn hàng: Tất cả" },
+  { value: "pending", label: "Đơn hàng: Chờ xử lý" },
+  { value: "processing", label: "Đơn hàng: Đang xử lý" },
+  { value: "completed", label: "Đơn hàng: Hoàn tất" },
+  { value: "cancelled", label: "Đơn hàng: Đã hủy" },
 ];
 
 const LIMIT_OPTIONS = [10, 20, 50];
@@ -56,7 +56,19 @@ function Badge({ value, type }) {
         map[normalized] || "bg-surface-container text-on-surface-variant"
       }`}
     >
-      {normalized || "-"}
+      {type === "payment"
+        ? {
+            paid: "Đã thanh toán",
+            pending: "Chờ xử lý",
+            failed: "Thất bại",
+            refunded: "Đã hoàn tiền",
+          }[normalized] || "-"
+        : {
+            completed: "Hoàn tất",
+            processing: "Đang xử lý",
+            pending: "Chờ xử lý",
+            cancelled: "Đã hủy",
+          }[normalized] || "-"}
     </span>
   );
 }
@@ -151,11 +163,11 @@ export default function AdminOrdersPage() {
               receipt_long
             </span>
             <span className="font-label-sm text-label-sm uppercase">
-              Order Management
+              Quản lý đơn hàng
             </span>
           </div>
           <h2 className="font-headline-lg text-headline-lg text-on-surface">
-            Quản Lí Đơn Hàng
+            Quản lý đơn hàng
           </h2>
           <p className="text-body-md text-on-surface-variant">
             Hiển thị toàn bộ đơn hàng, tìm kiếm và lọc theo trạng thái/ngày/giá.
@@ -173,7 +185,7 @@ export default function AdminOrdersPage() {
           >
             refresh
           </span>
-          Refresh
+          Làm mới
         </button>
       </section>
 
@@ -296,7 +308,7 @@ export default function AdminOrdersPage() {
           >
             {LIMIT_OPTIONS.map((item) => (
               <option key={item} value={item}>
-                {item}/page
+                {item}/trang
               </option>
             ))}
           </select>
@@ -306,7 +318,7 @@ export default function AdminOrdersPage() {
             className="rounded-lg border border-outline-variant px-3 py-2.5 text-label-md font-label-md text-on-surface-variant transition-colors hover:bg-surface-container"
             onClick={resetFilters}
           >
-            Reset filters
+            Đặt lại bộ lọc
           </button>
         </div>
 

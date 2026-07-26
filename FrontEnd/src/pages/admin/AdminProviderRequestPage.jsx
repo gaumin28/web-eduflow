@@ -27,7 +27,7 @@ const AdminProviderRequestPage = () => {
   const { data, isLoading, isFetching, refetch } = useGetProviderRequests(
     page,
     pageSize,
-    status
+    status,
   );
 
   const providers = data?.data || [];
@@ -93,16 +93,22 @@ const AdminProviderRequestPage = () => {
       key: "status",
       align: "center",
       render: (status) => {
-        const tagConfig = STATUS_TAGS[status] || { color: "default", text: status };
+        const tagConfig = STATUS_TAGS[status] || {
+          color: "default",
+          text: status,
+        };
         return (
-          <Tag color={tagConfig.color} className="m-0 px-3 py-1 rounded-full text-xs font-label-md ant-tag-custom">
+          <Tag
+            color={tagConfig.color}
+            className="m-0 px-3 py-1 rounded-full text-xs font-label-md ant-tag-custom"
+          >
             {tagConfig.text}
           </Tag>
         );
       },
     },
     {
-      title: "Actions",
+      title: "Thao tác",
       key: "actions",
       align: "center",
       width: 100,
@@ -134,14 +140,15 @@ const AdminProviderRequestPage = () => {
               manage_accounts
             </span>
             <span className="font-label-sm text-label-sm uppercase">
-              Provider Requests
+              Yêu cầu đối tác
             </span>
           </div>
           <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-tight m-0">
             Yêu Cầu Đăng Ký Đối Tác
           </h2>
           <p className="text-[12px] mt-1 text-on-surface-variant">
-            Danh sách người dùng gửi yêu cầu xác thực hồ sơ trở thành nhà cung cấp.
+            Danh sách người dùng gửi yêu cầu xác thực hồ sơ trở thành nhà cung
+            cấp.
           </p>
         </div>
         <div className="flex items-center gap-3 mt-4 sm:mt-0">
@@ -151,10 +158,14 @@ const AdminProviderRequestPage = () => {
             className="p-2.5 h-auto border border-outline-variant/40 rounded-xl flex items-center justify-center gap-2"
             type="text"
           >
-            <span className={`material-symbols-outlined text-on-surface-variant text-[20px] ${loading ? "animate-spin" : ""}`}>
+            <span
+              className={`material-symbols-outlined text-on-surface-variant text-[20px] ${loading ? "animate-spin" : ""}`}
+            >
               refresh
             </span>
-            <span className="text-on-surface-variant font-label-md">Làm mới</span>
+            <span className="text-on-surface-variant font-label-md">
+              Làm mới
+            </span>
           </Button>
         </div>
       </div>

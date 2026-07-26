@@ -30,7 +30,7 @@ export default function UserDetailModal({
 }) {
   if (!open || !user) return null;
 
-  const username = user.username || user.fullName || user.name || "User";
+  const username = user.username || user.fullName || user.name || "Người dùng";
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center bg-on-surface/45 p-margin-mobile backdrop-blur-sm">
@@ -66,17 +66,31 @@ export default function UserDetailModal({
               {error}
             </div>
           )}
-          <DetailRow label="Username" value={username} />
+          <DetailRow label="Tên người dùng" value={username} />
           <DetailRow label="Email" value={user.email} />
-          <DetailRow label="Role" value={user.role} />
+          <DetailRow
+            label="Vai trò"
+            value={
+              user.role === "admin"
+                ? "Quản trị viên"
+                : user.role === "provider"
+                  ? "Giảng viên"
+                  : user.role === "customer"
+                    ? "Học viên"
+                    : user.role
+            }
+          />
           <div className="rounded-lg border border-outline-variant/50 bg-surface-container-lowest p-4">
             <p className="mb-2 text-label-sm font-label-sm uppercase text-outline">
-              Status
+              Trạng thái
             </p>
             <UserStatusBadge isActive={user.isActive} />
           </div>
-          <DetailRow label="Created at" value={formatDate(user.createdAt)} />
-          <DetailRow label="Updated at" value={formatDate(user.updatedAt)} />
+          <DetailRow label="Ngày tạo" value={formatDate(user.createdAt)} />
+          <DetailRow
+            label="Cập nhật lần cuối"
+            value={formatDate(user.updatedAt)}
+          />
         </div>
 
         <div className="flex flex-col-reverse justify-end gap-3 border-t border-outline-variant/30 p-6 sm:flex-row">
@@ -85,7 +99,7 @@ export default function UserDetailModal({
             className="rounded-lg border border-outline-variant px-4 py-2.5 font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container"
             onClick={onClose}
           >
-            Close
+            Đóng
           </button>
           <button
             type="button"
@@ -99,10 +113,10 @@ export default function UserDetailModal({
               {user.isActive ? "lock" : "lock_open"}
             </span>
             {actionLoading
-              ? "Processing..."
+              ? "Đang xử lý..."
               : user.isActive
-                ? "Lock user"
-                : "Unlock user"}
+                ? "Khóa người dùng"
+                : "Mở khóa người dùng"}
           </button>
         </div>
       </div>

@@ -11,9 +11,9 @@ import Pagination from "../../components/ui/Pagination";
 
 const ROLE_OPTIONS = ["all", "customer", "provider", "admin"];
 const STATUS_OPTIONS = [
-  { value: "all", label: "All statuses" },
-  { value: "active", label: "Active" },
-  { value: "locked", label: "Locked" },
+  { value: "all", label: "Tất cả trạng thái" },
+  { value: "active", label: "Đang hoạt động" },
+  { value: "locked", label: "Đã khóa" },
 ];
 const LIMIT_OPTIONS = [5, 10, 20];
 
@@ -22,13 +22,15 @@ function getUserId(user) {
 }
 
 function getUsername(user) {
-  return user?.username || user?.fullName || user?.name || "Unnamed user";
+  return (
+    user?.username || user?.fullName || user?.name || "Người dùng chưa đặt tên"
+  );
 }
 
 function getInitials(user) {
   const name = getUsername(user);
   const fallback = user?.email || "U";
-  const source = name === "Unnamed user" ? fallback : name;
+  const source = name === "Người dùng chưa đặt tên" ? fallback : name;
   return source
     .split(/[ .@_-]/)
     .filter(Boolean)
@@ -69,7 +71,7 @@ function unwrapUserDetail(response) {
 
 function getApiErrorMessage(err, fallback) {
   if (err.response?.status === 403) {
-    return "You do not have permission to manage users.";
+    return "Bạn không có quyền quản lý người dùng.";
   }
 
   return err.response?.data?.message || err.message || fallback;
@@ -77,6 +79,11 @@ function getApiErrorMessage(err, fallback) {
 
 function RoleBadge({ role }) {
   const normalized = String(role || "customer").toLowerCase();
+  const roleLabelMap = {
+    admin: "Quản trị viên",
+    provider: "Giảng viên",
+    customer: "Học viên",
+  };
   const roleClass =
     normalized === "admin"
       ? "bg-primary-container/20 text-primary"
@@ -95,7 +102,7 @@ function RoleBadge({ role }) {
             ? "co_present"
             : "person"}
       </span>
-      {normalized}
+      {roleLabelMap[normalized] || normalized}
     </span>
   );
 }
@@ -154,7 +161,7 @@ export default function AdminUsersPage() {
         totalPages: nextPagination.totalPages || 1,
       });
     } catch (err) {
-      setError(getApiErrorMessage(err, "Failed to load users."));
+      setError(getApiErrorMessage(err, "Không thể tải danh sách người dùng."));
       setUsers([]);
     } finally {
       setLoading(false);
@@ -200,7 +207,10 @@ export default function AdminUsersPage() {
       const response = await getUserDetail(getUserId(targetUser));
       setSelectedUser(unwrapUserDetail(response));
     } catch (err) {
-      const message = getApiErrorMessage(err, "Failed to load user detail.");
+      const message = getApiErrorMessage(
+        err,
+        "Không thể tải chi tiết người dùng.",
+      );
       setDetailError(message);
       setError(message);
     } finally {
@@ -213,14 +223,16 @@ export default function AdminUsersPage() {
     const nextStatus = !targetUser.isActive;
 
     if (currentUserId && targetId === currentUserId && !nextStatus) {
-      setError("You cannot lock your own admin account from this screen.");
+      setError(
+        "Bạn không thể tự khóa tài khoản quản trị của chính mình từ màn hình này.",
+      );
       return;
     }
 
     const confirmed = window.confirm(
       nextStatus
-        ? `Unlock ${getUsername(targetUser)}?`
-        : `Lock ${getUsername(targetUser)}?`,
+        ? `Mở khóa ${getUsername(targetUser)}?`
+        : `Khóa ${getUsername(targetUser)}?`,
     );
     if (!confirmed) return;
 
@@ -250,7 +262,7 @@ export default function AdminUsersPage() {
     } catch (err) {
       const message = getApiErrorMessage(
         err,
-        `Failed to ${nextStatus ? "unlock" : "lock"} user.`,
+        `Không thể ${nextStatus ? "mở khóa" : "khóa"} người dùng.`,
       );
       setError(message);
       if (detailOpen && selectedUser && getUserId(selectedUser) === targetId) {
@@ -268,14 +280,14 @@ export default function AdminUsersPage() {
           <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary-container/15 px-3 py-1 text-primary">
             <span className="material-symbols-outlined text-[18px]">group</span>
             <span className="font-label-sm text-label-sm uppercase">
-              User Management
+              Quản lý người dùng
             </span>
           </div>
           <h2 className="font-headline-lg text-headline-lg text-on-surface">
-            Manage Users
+            Quản lý người dùng
           </h2>
           <p className="text-body-md text-on-surface-variant">
-            Search, filter, inspect, lock, and unlock EduFlow accounts.
+            Tìm kiếm, lọc, xem chi tiết, khóa và mở khóa tài khoản EduFlow.
           </p>
         </div>
 
@@ -292,7 +304,7 @@ export default function AdminUsersPage() {
           >
             refresh
           </span>
-          Refresh
+          Làm mới
         </button>
       </section>
 
@@ -304,7 +316,7 @@ export default function AdminUsersPage() {
             </span>
             <input
               className="w-full rounded-lg border border-outline-variant bg-surface-container-lowest py-3 pl-10 pr-4 text-body-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-              placeholder="Search username or email..."
+              placeholder="Tìm theo tên người dùng hoặc email..."
               type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
@@ -318,7 +330,13 @@ export default function AdminUsersPage() {
           >
             {ROLE_OPTIONS.map((item) => (
               <option key={item} value={item}>
-                {item === "all" ? "All roles" : item}
+                {item === "all"
+                  ? "Tất cả vai trò"
+                  : item === "admin"
+                    ? "Quản trị viên"
+                    : item === "provider"
+                      ? "Giảng viên"
+                      : "Học viên"}
               </option>
             ))}
           </select>
@@ -342,7 +360,7 @@ export default function AdminUsersPage() {
           >
             {LIMIT_OPTIONS.map((item) => (
               <option key={item} value={item}>
-                {item} / page
+                {item} / trang
               </option>
             ))}
           </select>
@@ -359,16 +377,20 @@ export default function AdminUsersPage() {
           <table className="w-full min-w-225 border-collapse text-left">
             <thead>
               <tr className="bg-surface-container-low text-on-surface-variant">
-                {["User", "Role", "Status", "Created At", "Actions"].map(
-                  (heading) => (
-                    <th
-                      key={heading}
-                      className="px-6 py-4 font-label-md text-label-md"
-                    >
-                      {heading}
-                    </th>
-                  ),
-                )}
+                {[
+                  "Người dùng",
+                  "Vai trò",
+                  "Trạng thái",
+                  "Ngày tạo",
+                  "Thao tác",
+                ].map((heading) => (
+                  <th
+                    key={heading}
+                    className="px-6 py-4 font-label-md text-label-md"
+                  >
+                    {heading}
+                  </th>
+                ))}
               </tr>
             </thead>
 
@@ -410,10 +432,10 @@ export default function AdminUsersPage() {
                       </div>
                       <div>
                         <h3 className="font-headline-md text-headline-md text-on-surface">
-                          No users found
+                          Không tìm thấy người dùng
                         </h3>
                         <p className="mt-1 text-body-sm text-on-surface-variant">
-                          Try changing the search text or filters.
+                          Hãy thử thay đổi từ khóa tìm kiếm hoặc bộ lọc.
                         </p>
                       </div>
                     </div>
@@ -439,7 +461,7 @@ export default function AdminUsersPage() {
                               {getUsername(item)}
                             </p>
                             <p className="truncate text-[12px] text-on-surface-variant">
-                              {item.email || "No email"}
+                              {item.email || "Chưa có email"}
                             </p>
                           </div>
                         </div>
@@ -463,7 +485,7 @@ export default function AdminUsersPage() {
                             <span className="material-symbols-outlined text-[18px]">
                               visibility
                             </span>
-                            View
+                            Xem
                           </button>
                           <button
                             type="button"
@@ -476,7 +498,11 @@ export default function AdminUsersPage() {
                             <span className="material-symbols-outlined text-[18px]">
                               {item.isActive ? "lock" : "lock_open"}
                             </span>
-                            {isBusy ? "..." : item.isActive ? "Lock" : "Unlock"}
+                            {isBusy
+                              ? "..."
+                              : item.isActive
+                                ? "Khóa"
+                                : "Mở khóa"}
                           </button>
                         </div>
                       </td>
@@ -503,7 +529,7 @@ export default function AdminUsersPage() {
               progress_activity
             </span>
             <span className="font-label-md text-label-md text-on-surface">
-              Loading user detail...
+              Đang tải chi tiết người dùng...
             </span>
           </div>
         </div>

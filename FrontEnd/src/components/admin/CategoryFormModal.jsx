@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 
 const ICON_OPTIONS = [
-  { value: "web", label: "Web Development", icon: "public" },
-  { value: "data", label: "Data Science", icon: "analytics" },
-  { value: "mobile", label: "Mobile Development", icon: "smartphone" },
-  { value: "language", label: "Programming", icon: "code" },
-  { value: "game", label: "Game Development", icon: "sports_esports" },
-  { value: "design", label: "Design", icon: "palette" },
-  { value: "business", label: "Business", icon: "business_center" },
+  { value: "web", label: "Phát triển web", icon: "public" },
+  { value: "data", label: "Khoa học dữ liệu", icon: "analytics" },
+  { value: "mobile", label: "Phát triển di động", icon: "smartphone" },
+  { value: "language", label: "Lập trình", icon: "code" },
+  { value: "game", label: "Phát triển game", icon: "sports_esports" },
+  { value: "design", label: "Thiết kế", icon: "palette" },
+  { value: "business", label: "Kinh doanh", icon: "business_center" },
   { value: "marketing", label: "Marketing", icon: "campaign" },
-  { value: "music", label: "Music", icon: "music_note" },
-  { value: "photo", label: "Photography", icon: "photo_camera" },
+  { value: "music", label: "Âm nhạc", icon: "music_note" },
+  { value: "photo", label: "Nhiếp ảnh", icon: "photo_camera" },
 ];
 
 /**
@@ -107,7 +107,7 @@ export default function CategoryFormModal({
               type="text"
               value={cateName}
               onChange={(e) => setCateName(e.target.value)}
-              placeholder="Ví dụ: Web Development"
+              placeholder="Ví dụ: Phát triển web"
               className={`w-full rounded-lg border px-4 py-3 text-body-sm outline-none transition-all ${
                 errors.cateName
                   ? "border-error focus:ring-2 focus:ring-error/20"
