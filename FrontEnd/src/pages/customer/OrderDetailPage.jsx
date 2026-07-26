@@ -2,6 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { getMyOrderDetail } from "../../services/userService";
 
+// Task notes (Order detail):
+// - Show full information for one user order.
+// - Render payment/order status and item-level price breakdown.
+
 const STATUS_MAP = {
   paid: { label: "Đã thanh toán", cls: "bg-green-100 text-green-700" },
   pending: { label: "Chờ thanh toán", cls: "bg-yellow-100 text-yellow-700" },
@@ -17,6 +21,7 @@ export default function OrderDetailPage() {
     isFetching,
     error: queryError,
   } = useQuery({
+    // Load order detail by route param.
     queryKey: ["customer-order-detail", orderId || ""],
     enabled: !!orderId,
     queryFn: async () => {

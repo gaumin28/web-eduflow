@@ -8,6 +8,10 @@ import {
   removeCartItem,
 } from "../services/cartService";
 
+// Task notes (Cart state):
+// - Keep cart synchronized between local UI state and backend API.
+// - Normalize course/cart payloads so cart and checkout pages consume one format.
+
 const STORAGE_KEY = "cartItems";
 const CartContext = createContext(null);
 const MONGO_OBJECT_ID_REGEX = /^[a-f\d]{24}$/i;
@@ -42,6 +46,7 @@ function parsePrice(rawPrice) {
 }
 
 function normalizeCartItem(course) {
+  // Normalize diverse course objects into one cart item shape.
   const priceNumber = parsePrice(course.price_promotion ?? course.price ?? 0);
   const originalPriceNumber = parsePrice(course.price ?? priceNumber);
 
@@ -100,6 +105,7 @@ export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState(getStoredCartItems);
 
   useEffect(() => {
+    // Persist cart locally for guest or fast page reload recovery.
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems));
   }, [cartItems]);
 
@@ -124,6 +130,7 @@ export function CartProvider({ children }) {
   }, [user]);
 
   const addToCart = async (course) => {
+    // Prefer server cart for signed-in users; fallback to local cart for guest mode.
     const item = normalizeCartItem(course);
 
     if (user && isMongoObjectId(item.id)) {

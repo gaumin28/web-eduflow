@@ -3,6 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import Pagination from "../../components/ui/Pagination";
 import { getAdminOrders } from "../../services/adminOrderService";
 
+// Task notes (Admin orders):
+// - Admin can search and filter orders by payment/order/date/price.
+// - Display normalized status badges for quick monitoring.
+// - Support paginated table for large order datasets.
+
 const PAYMENT_STATUS_OPTIONS = [
   { value: "", label: "Thanh toán: Tất cả" },
   { value: "pending", label: "Thanh toán: Chờ xử lý" },
@@ -86,6 +91,7 @@ export default function AdminOrdersPage() {
   const [maxPrice, setMaxPrice] = useState("");
 
   useEffect(() => {
+    // Debounce keyword input to reduce API calls while typing.
     const timer = setTimeout(() => {
       setSearch(searchInput);
       setPage(1);
@@ -95,6 +101,7 @@ export default function AdminOrdersPage() {
   }, [searchInput]);
 
   const queryParams = useMemo(
+    // Single source of truth for all active filters.
     () => ({
       page,
       limit,
@@ -143,6 +150,7 @@ export default function AdminOrdersPage() {
     queryError?.response?.data?.message || queryError?.message || "";
 
   const resetFilters = () => {
+    // Fast reset to default list state.
     setSearchInput("");
     setSearch("");
     setPaymentStatus("");

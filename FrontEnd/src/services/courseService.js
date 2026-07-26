@@ -1,5 +1,9 @@
 import api from "../lib/api";
 
+// Task notes (Course service):
+// - Supports homepage search result page filters/sorting/pagination.
+// - Supports course detail page opening from cards.
+
 /**
  *
  * @param {Object} params
@@ -12,7 +16,7 @@ import api from "../lib/api";
  * @param {number} [params.limit]     — items per page (default 12)
  */
 export const getCourses = (params = {}) => {
-  // Remove empty/undefined values from the params
+  // Remove empty/undefined values so backend only receives active filters.
   const cleanParams = Object.fromEntries(
     Object.entries(params).filter(
       ([, v]) => v !== undefined && v !== null && v !== "",

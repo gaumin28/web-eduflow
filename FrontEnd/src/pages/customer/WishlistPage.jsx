@@ -5,6 +5,11 @@ import { getWishlist } from "../../services/wishlistService";
 import { getCourses } from "../../services/courseService";
 import { useCart } from "../../contexts/CartContext";
 
+// Task notes (Wishlist page):
+// - Display all favorite courses for current user.
+// - Allow remove-from-wishlist and add-to-cart directly from cards.
+// - Suggest related courses not already in wishlist.
+
 const customStyles = `
   .glass-card {
     background: rgba(255, 255, 255, 0.7);
@@ -178,6 +183,7 @@ export default function WishlistPage() {
 
   // Fetch full wishlist details whenever wishlistIds changes
   useEffect(() => {
+    // Keep wishlist page synced with global wishlist IDs.
     if (wishlistLoading) return;
     getWishlist()
       .then((res) => setWishlistCourses(res.data.data))
@@ -187,6 +193,7 @@ export default function WishlistPage() {
 
   // Fetch related courses (latest courses, exclude already in wishlist)
   useEffect(() => {
+    // Related section excludes courses that are already favorited.
     getCourses({ limit: 8 })
       .then((res) => {
         const all = res.data.data ?? [];

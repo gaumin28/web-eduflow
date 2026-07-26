@@ -5,6 +5,11 @@ import { useCart } from "../../contexts/CartContext";
 import { useWishlist } from "../../contexts/WishlistContext";
 import { getCourses } from "../../services/courseService";
 
+// Task notes (Cart page):
+// - Show cart items with remove action and wishlist transfer.
+// - Compute summary (subtotal, discounts, tax, total) in real time.
+// - Navigate to checkout when user confirms purchase.
+
 const COUPON_DISCOUNT = 15;
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", {
@@ -35,6 +40,7 @@ export default function ShoppingCartPage() {
   });
 
   const removeItem = (itemId) => {
+    // UI animation before removing item from global cart state.
     setRemovingItemIds((prev) => new Set(prev).add(itemId));
 
     window.setTimeout(() => {
@@ -78,6 +84,7 @@ export default function ShoppingCartPage() {
   const total = taxableAmount + tax;
 
   const recommendedCourses = useMemo(() => {
+    // Recommendation section excludes courses already in cart.
     const cartIds = new Set(
       cartItems.map((item) => String(item.id ?? item._id)),
     );
@@ -242,6 +249,7 @@ export default function ShoppingCartPage() {
             </section>
 
             <section className="bg-surface-container-highest p-stack-lg rounded-xl shadow-sm">
+              {/* Order summary used by checkout decision. */}
               <h2 className="font-headline-md text-headline-md text-on-surface mb-stack-md">
                 Tóm tắt đơn hàng
               </h2>

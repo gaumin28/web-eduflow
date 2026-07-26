@@ -5,6 +5,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { changePassword } from "../../services/userService";
 import { useAuth } from "../../contexts/AuthContext";
 
+// Task notes (Change password):
+// - Validate current/new/confirm password fields.
+// - Call change-password API and force re-login on success.
+
 const { Text } = Typography;
 
 export default function ChangePasswordPage() {
@@ -15,6 +19,7 @@ export default function ChangePasswordPage() {
   const [error, setError] = useState("");
 
   const handleSubmit = async (values) => {
+    // Security flow: after password change, logout current session.
     try {
       setSaving(true);
       setError("");

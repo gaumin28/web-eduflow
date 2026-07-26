@@ -8,6 +8,10 @@ import {
   removeFromWishlist,
 } from "../services/wishlistService";
 
+// Task notes (Wishlist state):
+// - Provide global wishlist IDs for wishlist page and course cards.
+// - Use optimistic toggle for responsive add/remove favorite actions.
+
 const WishlistContext = createContext(null);
 export const useWishlist = () => useContext(WishlistContext);
 
@@ -41,7 +45,7 @@ export function WishlistProvider({ children }) {
     const wasAdded = wishlistIds.has(id);
     const prev = queryClient.getQueryData(wishlistQueryKey) || [];
 
-    // Optimistic update
+    // Optimistic update: update UI first, rollback only when API fails.
     queryClient.setQueryData(wishlistQueryKey, (old = []) => {
       if (wasAdded) return old.filter((item) => item !== id);
       return [...old, id];

@@ -8,6 +8,11 @@ import {
 } from "../../services/userService";
 import { getWishlist } from "../../services/wishlistService";
 
+// Task notes (User dashboard):
+// - Show purchased courses preview.
+// - Show wishlist preview with add-to-cart shortcut.
+// - Show recent orders with link to full order history.
+
 export default function DashboardPage() {
   const { user } = useAuth();
   const { addToCart } = useCart();
@@ -21,6 +26,7 @@ export default function DashboardPage() {
   const [wishlistLoading, setWishlistLoading] = useState(true);
 
   useEffect(() => {
+    // Fetch compact data for dashboard widgets.
     getMyPurchasedCourses()
       .then((res) => setMyCourses(res.data.data.slice(0, 3)))
       .catch(() => setMyCourses([]))
@@ -49,7 +55,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* My Courses */}
+      {/* My Courses: quick access to purchased content */}
       <section>
         <div className="flex justify-between items-center mb-stack-md">
           <h3 className="font-headline-md text-headline-md text-on-surface">
@@ -158,7 +164,7 @@ export default function DashboardPage() {
         )}
       </section>
 
-      {/* Wishlist + Orders */}
+      {/* Wishlist + Orders: summarize saved items and user order history */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-stack-lg">
         {/* Wishlist */}
         <section>

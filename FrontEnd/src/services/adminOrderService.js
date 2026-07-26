@@ -1,6 +1,10 @@
 import api from "../lib/api";
 
+// Task notes (Admin order API):
+// - Fetch admin order list with filter/search params.
+
 function cleanParams(params = {}) {
+  // Send only meaningful filters to backend.
   const result = {};
 
   Object.entries(params).forEach(([key, value]) => {

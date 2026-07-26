@@ -1,5 +1,9 @@
 import { getCourseDetail } from "./courseService";
 
+// Task notes (Recent views):
+// - Read recently viewed course IDs from localStorage.
+// - Hydrate each ID into display-ready course cards for homepage.
+
 export const getRecentlyViewed = async () => {
   try {
     const history = JSON.parse(localStorage.getItem("viewHistory") || "[]");
@@ -9,7 +13,9 @@ export const getRecentlyViewed = async () => {
     const results = await Promise.allSettled(promises);
 
     const courses = results
-      .filter((r) => r.status === "fulfilled" && r.value.data && r.value.data.course)
+      .filter(
+        (r) => r.status === "fulfilled" && r.value.data && r.value.data.course,
+      )
       .map((r) => r.value.data.course);
 
     const formattedCourses = courses.map((c) => ({
@@ -19,7 +25,10 @@ export const getRecentlyViewed = async () => {
       price: c.price,
       price_promotion: c.price_promotion,
       students: c.students || 0,
-      provider: c.provider_id?.provider_name || c.provider?.provider_name || "Unknown Instructor",
+      provider:
+        c.provider_id?.provider_name ||
+        c.provider?.provider_name ||
+        "Unknown Instructor",
       duration: c.duration,
     }));
 

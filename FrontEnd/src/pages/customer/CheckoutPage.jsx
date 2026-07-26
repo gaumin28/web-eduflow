@@ -4,6 +4,11 @@ import { message } from "antd";
 import { useCart } from "../../contexts/CartContext";
 import { checkoutCart } from "../../services/cartService";
 
+// Task notes (Checkout page):
+// - Validate payment and billing form before submit.
+// - Submit checkout request and clear cart on success.
+// - Show order cost breakdown for final confirmation.
+
 const PAYMENT_OPTIONS = [
   {
     key: "card",
@@ -33,6 +38,7 @@ function formatMoney(value) {
 }
 
 function validateCheckoutForm(paymentType, formValues) {
+  // Keep validation centralized to reuse for live-check and submit-check.
   const errors = {};
 
   if (paymentType === "card") {
@@ -118,6 +124,7 @@ export default function CheckoutPage() {
     cartItems.length > 0 && !isSubmitting && isCheckoutFormValid;
 
   const handleCompletePurchase = async () => {
+    // Final guard: only send API request when form and cart are valid.
     if (cartItems.length === 0 || isSubmitting) return;
 
     const validationErrors = validateCheckoutForm(paymentType, formValues);
@@ -311,6 +318,7 @@ export default function CheckoutPage() {
             </div>
 
             <div className="space-y-4">
+              {/* Billing address block required for order processing. */}
               <p className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">
                 Địa chỉ thanh toán
               </p>

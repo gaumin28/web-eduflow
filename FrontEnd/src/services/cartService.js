@@ -1,5 +1,9 @@
 import api from "../lib/api";
 
+// Task notes (Cart/Checkout API):
+// - CRUD cart items and clear cart.
+// - Submit checkout payload from checkout page.
+
 export const getCart = () => api.get("/cart");
 
 export const addCartItem = (courseId) =>

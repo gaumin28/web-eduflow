@@ -1,5 +1,9 @@
 import api from "../lib/api";
 
+// Task notes (User dashboard/account/orders API):
+// - Purchased courses and recent/all orders for dashboard/order pages.
+// - Change password flow for account security.
+
 export const getMyPurchasedCourses = () => api.get("/orders/my-courses");
 export const getMyRecentOrders = () => api.get("/orders/recent");
 export const getMyAllOrders = () => api.get("/orders");

@@ -6,6 +6,10 @@ import { getCategories } from "../../services/homeService";
 import FilterSidebar from "../../components/FilterSidebar";
 import CourseList from "../../components/CourseList";
 
+// Task notes (Homepage search result):
+// - Receive keyword/category from URL and treat URL as source of truth.
+// - Support filter, sort, pagination, and debounced search updates.
+
 const ITEMS_PER_PAGE = 12;
 const DEBOUNCE_MS = 500;
 
@@ -113,6 +117,7 @@ export default function CourseSearchPage() {
 
   // ── Update URL params ─────────────────────────────────────
   const handleFilterChange = (key, value) => {
+    // Any filter change resets page to keep pagination valid.
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       if (value) {
@@ -139,6 +144,7 @@ export default function CourseSearchPage() {
   };
 
   const handlePageChange = (newPage) => {
+    // Keep page in URL to support refresh/back-forward navigation.
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       if (newPage > 1) {

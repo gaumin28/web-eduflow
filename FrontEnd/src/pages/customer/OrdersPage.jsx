@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getMyAllOrders } from "../../services/userService";
 
+// Task notes (User orders):
+// - Display full order history for current user.
+// - Map payment status to readable badge labels/colors.
+// - Provide link to each order detail page.
+
 const STATUS_MAP = {
+  // Centralized display mapping for payment status chips.
   paid: { label: "Đã thanh toán", cls: "bg-green-100 text-green-700" },
   pending: { label: "Chờ thanh toán", cls: "bg-yellow-100 text-yellow-700" },
   failed: { label: "Thất bại", cls: "bg-red-100 text-red-600" },
@@ -15,6 +21,7 @@ export default function OrdersPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Fetch all orders once when page is opened.
     getMyAllOrders()
       .then((res) => setOrders(res.data.data))
       .catch((err) =>

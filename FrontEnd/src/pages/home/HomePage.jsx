@@ -10,6 +10,11 @@ import { useCart } from "../../contexts/CartContext";
 import socket from "../../socket/socket";
 import { useAuth } from "../../contexts/AuthContext";
 
+// Task notes (Homepage):
+// - Search courses by keyword and navigate to result page.
+// - Display categories and featured courses from API.
+// - Support clicking course/provider cards to open detail pages.
+
 // Map icon_key from DB to Material Symbol names
 const ICON_MAP = {
   web: "public",
@@ -90,6 +95,7 @@ export default function HomePage() {
   }, [socket]);
 
   const handleSearch = () => {
+    // Homepage search flow: push keyword to all-courses query string.
     const keyword = searchKeyword.trim();
     if (keyword) {
       navigate(`/all-courses?q=${encodeURIComponent(keyword)}`);
@@ -106,6 +112,7 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    // Load homepage sections in parallel-style calls: categories, featured courses, providers, recent views.
     getCategories()
       .then(({ data }) => setCategories(data.data))
       .catch(console.error)
@@ -165,7 +172,7 @@ export default function HomePage() {
   return (
     <div className="bg-background text-on-surface font-body-md">
       <div ref={mainRef} className="pt-16">
-        {/* ── Hero Section ── */}
+        {/* Hero: keyword search entry point */}
         <section className="relative min-h-217.5 flex items-center justify-center hero-gradient px-margin-mobile md:px-margin-desktop overflow-hidden">
           <div className="absolute top-20 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-tertiary/5 rounded-full blur-3xl animate-pulse delay-700" />
@@ -236,7 +243,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── Categories Bento Grid ── */}
+        {/* Categories: render all category cards from backend */}
         <section className="py-stack-lg px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-stack-lg">
             <div>

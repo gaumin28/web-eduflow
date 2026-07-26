@@ -10,6 +10,11 @@ import {
   submitCourseReview,
 } from "../../services/providerService";
 
+// Task notes (Instructor page):
+// - Show instructor profile and related courses.
+// - Open course detail when user clicks a course card.
+// - Handle review create/update/delete for customer role.
+
 const tabs = [
   { id: "courses", label: "Khóa học" },
   { id: "reviews", label: "Đánh giá" },
@@ -115,6 +120,7 @@ export default function InstructorProfilePage() {
   const currentUserId = getEntityId(user);
 
   const loadProfileContent = async (providerId) => {
+    // Load tabs data (reviews/resources/summary) for selected instructor.
     const { data: profileContentResponse } =
       await getProviderProfileContent(providerId);
     setProfileContent(
@@ -130,6 +136,7 @@ export default function InstructorProfilePage() {
     let alive = true;
 
     const loadInstructorData = async () => {
+      // Resolve provider by query param, then load courses and profile content.
       setLoading(true);
       setError("");
 
@@ -212,6 +219,7 @@ export default function InstructorProfilePage() {
   };
 
   const handleSubmitReview = async (event) => {
+    // Submit current user's review for selected course and refresh review list.
     event.preventDefault();
     if (!reviewForm.courseId || !provider?._id) return;
 
@@ -266,6 +274,7 @@ export default function InstructorProfilePage() {
   };
 
   const handleOpenCourseDetail = (courseId) => {
+    // Course card click action.
     if (!courseId) return;
     navigate(`/course/detail/${courseId}`);
   };
