@@ -99,11 +99,11 @@ export default function AdminDashboardPage() {
               analytics
             </span>
             <span className="font-label-sm text-label-sm uppercase">
-              Platform Overview
+              Tổng quan nền tảng
             </span>
           </div>
           <h2 className="font-headline-lg text-headline-lg text-on-surface">
-            Dashboard
+            Bảng điều khiển
           </h2>
           <p className="text-body-md text-on-surface-variant">
             Tổng quan số liệu và hoạt động của nền tảng trong thời gian thực.
@@ -171,17 +171,17 @@ export default function AdminDashboardPage() {
           />
 
           <StatCard
-            title="Khóa Học (Active)"
+            title="Khóa học đang hoạt động"
             value={stats?.activeCourses}
             icon="menu_book"
           />
           <StatCard
-            title="Giảng Viên (Approved)"
+            title="Giảng viên đã duyệt"
             value={stats?.approvedProviders}
             icon="co_present"
           />
           <StatCard
-            title="Khách Hàng (Users)"
+            title="Tổng khách hàng"
             value={stats?.totalCustomers}
             icon="group"
           />
@@ -486,7 +486,7 @@ export default function AdminDashboardPage() {
                           </p>
                         </td>
                         <td className="px-6 py-4 font-body-sm text-on-surface-variant">
-                          {provider.career || "N/A"}
+                          {provider.career || "Chưa cập nhật"}
                         </td>
                       </tr>
                     ))
