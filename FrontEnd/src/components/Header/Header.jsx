@@ -24,9 +24,11 @@ const Header = () => {
     const keyword = searchKeyword.trim();
     if (keyword) {
       navigate(`/all-courses?q=${encodeURIComponent(keyword)}`);
+      setSearchKeyword("");
       return;
     }
     navigate("/all-courses");
+    setSearchKeyword("");
   };
 
   const handleSearchKeyDown = (event) => {
