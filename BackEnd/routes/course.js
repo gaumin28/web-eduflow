@@ -13,13 +13,31 @@ import {
   updateLearningProgress,
 } from "../controllers/course/course.js";
 import { getCourses } from "../controllers/course/getCourses.js";
-import authorizeRole  from "../middleware/authorizeRole.js";
-import authMiddleware  from "../middleware/authMiddleware.js";
-import { createCourseOverview, deleteCourseOverview, updateCourseOverview } from "../controllers/course/courseOverView.js";
-import { createCourseLecture, deleteCourseLecture, updateCourseLecture } from "../controllers/course/courseLecture.js";
-import { createCourseSection, deleteCourseSection, updateCourseSection } from "../controllers/course/courseSection.js";
-import { createCourseRequest, updateCourseRequest } from "../controllers/course/courseRequest.js";
+import authorizeRole from "../middleware/authorizeRole.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+import {
+  createCourseOverview,
+  deleteCourseOverview,
+  updateCourseOverview,
+} from "../controllers/course/courseOverView.js";
+import {
+  createCourseLecture,
+  deleteCourseLecture,
+  updateCourseLecture,
+} from "../controllers/course/courseLecture.js";
+import {
+  createCourseSection,
+  deleteCourseSection,
+  updateCourseSection,
+} from "../controllers/course/courseSection.js";
+import {
+  createCourseRequest,
+  updateCourseRequest,
+} from "../controllers/course/courseRequest.js";
 
+// Task notes (Course API for homepage/search):
+// - /api/courses powers search/filter/sort/pagination pages.
+// - /courses-feature and /courses/featured power homepage featured cards.
 
 const routerCourse = Router();
 
@@ -30,43 +48,43 @@ routerCourse.get(
   "/courses-of-provider",
   authMiddleware,
   authorizeRole("provider"),
-  getAllCourseOfProvider
+  getAllCourseOfProvider,
 );
 // Xuat file excel
 routerCourse.get(
   "/my-courses/export-excel",
   authMiddleware,
   authorizeRole("provider"),
-  exportCourseExcel
+  exportCourseExcel,
 );
 // Khóa học nổi bật
 routerCourse.get("/courses/featured", getFeaturedCourses);
 routerCourse.get("/courses-feature", getFeaturedCourses);
 // Khóa học detail
 routerCourse.get("/courses/:id", getCourseById);
-// Chi tiết khóa học đã mua 
+// Chi tiết khóa học đã mua
 routerCourse.get(
   "/my-courses/:id",
   authMiddleware,
   authorizeRole("customer"),
-  getPurchasedCourseById
+  getPurchasedCourseById,
 );
 // Học viên xem khóa học đã mua
 routerCourse.get(
   "/learning/courses/:courseId",
   authMiddleware,
   authorizeRole("customer"),
-  getCourseLearningDetail
+  getCourseLearningDetail,
 );
 
 // ************************************************************
 
-// Thêm khóa học mới 
+// Thêm khóa học mới
 routerCourse.post(
   "/courses",
-  authMiddleware, 
-  authorizeRole('provider'), 
-  createCourse
+  authMiddleware,
+  authorizeRole("provider"),
+  createCourse,
 );
 
 //Thêm tổng quan khóa học
@@ -74,26 +92,23 @@ routerCourse.post(
   "/courses/:courseId/overviews",
   authMiddleware,
   authorizeRole("provider"),
-  createCourseOverview
+  createCourseOverview,
 );
 // Thêm section khóa học
 routerCourse.post(
   "/courses/:courseId/course-sections",
-  authMiddleware, 
-  authorizeRole('provider'), 
-  createCourseSection
+  authMiddleware,
+  authorizeRole("provider"),
+  createCourseSection,
 );
 // Thêm lecture khóa học
-routerCourse.post(
-  "/course-lectures",
-  createCourseLecture
-);
+routerCourse.post("/course-lectures", createCourseLecture);
 //
 routerCourse.post(
   "/sections/:sectionId/lectures",
   authMiddleware,
   authorizeRole("provider"),
-  createCourseLecture
+  createCourseLecture,
 );
 
 // Thêm yêu cầu khóa học
@@ -101,17 +116,17 @@ routerCourse.post(
   "/courses/:courseId/requests",
   authMiddleware,
   authorizeRole("provider"),
-  createCourseRequest
+  createCourseRequest,
 );
 
 // ************************************************************
 
 // Cập nhật khóa học
 routerCourse.put(
-  "/courses/:id", 
-  authMiddleware, 
-  authorizeRole('provider'), 
-  UpdateCourse  
+  "/courses/:id",
+  authMiddleware,
+  authorizeRole("provider"),
+  UpdateCourse,
 );
 
 // Cập nhật tổng quan khóa học
@@ -119,20 +134,21 @@ routerCourse.put(
   "/courses/:courseId/overviews/:overviewId",
   authMiddleware,
   authorizeRole("provider"),
-  updateCourseOverview
+  updateCourseOverview,
 );
 // Cập nhật lecture detail
 routerCourse.put(
   "/lectures/:lectureId",
   authMiddleware,
   authorizeRole("provider"),
-  updateCourseLecture
+  updateCourseLecture,
 );
 // Cập nhật section
-routerCourse.put("/courses/:courseId/course-sections/:sectionId",
+routerCourse.put(
+  "/courses/:courseId/course-sections/:sectionId",
   authMiddleware,
   authorizeRole("provider"),
-  updateCourseSection
+  updateCourseSection,
 );
 
 // Cập nhật yêu cầu khóa học
@@ -140,7 +156,7 @@ routerCourse.put(
   "/courses/requests/:courseRequestId",
   authMiddleware,
   authorizeRole("provider"),
-  updateCourseRequest
+  updateCourseRequest,
 );
 
 // Cập nhật bài giảng hiện tại đang học của user trong khóa học
@@ -148,24 +164,24 @@ routerCourse.put(
   "/course-progress/update-learning-progress",
   authMiddleware,
   authorizeRole("customer"),
-  updateLearningProgress
+  updateLearningProgress,
 );
 // Cập nhật hoàn thành bài giảng
 routerCourse.put(
   "/course-progress/complete-lecture",
   authMiddleware,
   authorizeRole("customer"),
-  completeLecture
+  completeLecture,
 );
 // ************************************************************
 
 // Xóa khóa học
 
 routerCourse.delete(
-  "/courses/:id", 
-  authMiddleware, 
-  authorizeRole('provider'), 
-  deleteCourse
+  "/courses/:id",
+  authMiddleware,
+  authorizeRole("provider"),
+  deleteCourse,
 );
 
 // Xóa tổng quan khóa học
@@ -173,21 +189,20 @@ routerCourse.delete(
   "/courses/:courseId/overviews/:overviewId",
   authMiddleware,
   authorizeRole("provider"),
-  deleteCourseOverview
+  deleteCourseOverview,
 );
-
 
 routerCourse.delete(
   "/courses/:courseId/sections/:sectionId",
   authMiddleware,
   authorizeRole("provider"),
-  deleteCourseSection
+  deleteCourseSection,
 );
 
 routerCourse.delete(
   "/lectures/:lectureId",
   authMiddleware,
   authorizeRole("provider"),
-  deleteCourseLecture
+  deleteCourseLecture,
 );
 export default routerCourse;

@@ -2,6 +2,9 @@ import courseModel from "../../models/course/course.js";
 import categoryModel from "../../models/category.js";
 // Ensure the Provider model is registered for populate
 import "../../models/provider.js";
+
+// Task notes (Controller: course search list):
+// - Implements backend filtering/sorting/pagination for all-courses and homepage search.
 /**
  * GET /api/courses
  *

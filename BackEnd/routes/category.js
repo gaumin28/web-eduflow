@@ -10,6 +10,10 @@ import {
 import authMiddleware from "../middleware/authMiddleware.js";
 import authorizeRole from "../middleware/authorizeRole.js";
 
+// Task notes (Category API):
+// - Public category endpoints power homepage/category filter UI.
+// - Admin endpoints power admin category management page.
+
 const categoryRouter = Router();
 
 // ── Public routes ──────────────────────────────────────────

@@ -14,6 +14,11 @@ import {
   removeCartItem,
 } from "../controllers/cart.js";
 
+// Task notes (Cart + Checkout + Orders API):
+// - Customer cart CRUD and checkout.
+// - Customer order history/detail endpoints.
+// - Admin order management endpoint with filters.
+
 const routerCart = Router();
 const customerOnly = [authMiddleware, authorizeRole("customer")];
 const adminOnly = [authMiddleware, authorizeRole("admin")];
@@ -28,7 +33,7 @@ routerCart.delete("/cart/items/:courseId", customerOnly, removeCartItem);
 routerCart.delete("/cart", customerOnly, clearCart);
 routerCart.post("/checkout", customerOnly, checkout);
 
-// Admin order management
+// Admin order management (used by AdminOrdersPage filters/search/pagination)
 routerCart.get("/admin/orders", adminOnly, getAdminOrders);
 
 export default routerCart;

@@ -2,6 +2,10 @@ import userModel from "../models/user.js";
 import courseModel from "../models/course/course.js";
 import mongoose from "mongoose";
 
+// Task notes (Controller: user/wishlist):
+// - Supplies admin user management APIs.
+// - Supplies customer wishlist read/add/remove APIs.
+
 const hiddenUserFields =
   "-password -refreshToken -resetPasswordToken -resetPasswordExpires -emailVerifyToken";
 const allowedRoles = ["customer", "provider", "admin"];
@@ -173,9 +177,10 @@ export const updateUserStatus = async (req, res) => {
 // ── Wishlist ──────────────────────────────────────────────────────────────────
 
 export const getWishlist = async (req, res) => {
+  // Return full course cards for wishlist page rendering.
   try {
     const userId = req.user?.userId;
-    const user = await userModel 
+    const user = await userModel
       .findById(userId)
       .populate({
         path: "wishlist",
@@ -211,6 +216,7 @@ export const getWishlist = async (req, res) => {
 };
 
 export const addToWishlist = async (req, res) => {
+  // Idempotent favorite action using $addToSet.
   try {
     const userId = req.user?.userId;
     const { courseId } = req.params;
@@ -240,6 +246,7 @@ export const addToWishlist = async (req, res) => {
 };
 
 export const removeFromWishlist = async (req, res) => {
+  // Remove one course from wishlist.
   try {
     const userId = req.user?.userId;
     const { courseId } = req.params;

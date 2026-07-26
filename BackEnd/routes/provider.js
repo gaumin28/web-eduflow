@@ -18,6 +18,11 @@ import authMiddleware from "../middleware/authMiddleware.js";
 import { uploadProviderFiles } from "../middleware/upload.js";
 import authorizeRole from "../middleware/authorizeRole.js";
 
+// Task notes (Provider/Instructor API):
+// - Public provider listing and provider course/profile-content endpoints.
+// - Customer review create/delete for instructor courses.
+// - Admin endpoints for provider request approval workflow.
+
 const routerProvider = Router();
 
 routerProvider.get("/providers", getProviders);

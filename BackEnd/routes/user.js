@@ -15,12 +15,16 @@ const routerUser = Router();
 const adminOnly = [authMiddleware, authorizeRole("admin")];
 const customerOnly = [authMiddleware, authorizeRole("customer")];
 
+// Task notes (User/Wishlist API):
+// - Admin user management endpoints.
+// - Customer wishlist endpoints used by dashboard and wishlist page.
+
 routerUser.post("/users", createUser);
 routerUser.get("/users", adminOnly, getAllUsers);
 routerUser.get("/users/:id", adminOnly, getUserById);
 routerUser.patch("/users/:id/status", adminOnly, updateUserStatus);
 
-// Wishlist
+// Wishlist (all favorite products for customer)
 routerUser.get("/wishlist", customerOnly, getWishlist);
 routerUser.post("/wishlist/:courseId", customerOnly, addToWishlist);
 routerUser.delete("/wishlist/:courseId", customerOnly, removeFromWishlist);

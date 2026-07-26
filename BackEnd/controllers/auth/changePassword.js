@@ -1,12 +1,16 @@
 import bcrypt from "bcrypt";
 import userModel from "../../models/user.js";
 
+// Task notes (Controller: change password):
+// - Validates current/new/confirm password.
+// - Rotates password hash and invalidates refresh token to require re-login.
+
 // Đổi mật khẩu
 export const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmPassword } = req.body;
 
-    // validate
+    // Validate required fields and confirmation consistency.
     if (!currentPassword || !newPassword || !confirmPassword) {
       return res.status(400).json({
         message: "Vui lòng nhập đầy đủ thông tin",
@@ -51,7 +55,7 @@ export const changePassword = async (req, res) => {
 
     user.password = hashedPassword;
 
-    // logout tất cả thiết bị
+    // Invalidate refresh token so user signs in again after password change.
     user.refreshToken = null;
 
     await user.save();

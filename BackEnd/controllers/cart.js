@@ -4,6 +4,10 @@ import courseModel from "../models/course/course.js";
 import orderModel from "../models/order.js";
 import { createProgressAfterCheckout } from "../services/course/courseService.js";
 
+// Task notes (Controller: cart/order):
+// - Provides data for cart page, checkout page, user orders, and admin orders.
+// - Computes order summary values to keep frontend totals consistent.
+
 const TAX_RATE = 0.1;
 
 const toDateStart = (value) => {
@@ -57,6 +61,7 @@ const getSubtotal = (items) => {
 };
 
 const getCartSummary = (cart) => {
+  // Shared summary logic used by cart APIs and frontend order totals.
   const subtotal = getSubtotal(cart.items);
   const saleDiscount = getDiscountTotal(cart.items);
   const taxableAmount = Math.max(subtotal - saleDiscount, 0);
@@ -241,6 +246,7 @@ export const clearCart = async (req, res) => {
 };
 
 export const getMyAllOrders = async (req, res) => {
+  // Full order history for customer OrdersPage.
   try {
     const userId = req.user?.userId;
 
@@ -271,6 +277,7 @@ export const getMyAllOrders = async (req, res) => {
 };
 
 export const getMyRecentOrders = async (req, res) => {
+  // Lightweight recent orders for dashboard widget.
   try {
     const userId = req.user?.userId;
 
@@ -298,6 +305,7 @@ export const getMyRecentOrders = async (req, res) => {
 };
 
 export const getMyOrderById = async (req, res) => {
+  // Detailed order payload for OrderDetailPage.
   try {
     const userId = req.user?.userId;
     const { orderId } = req.params;
@@ -343,6 +351,7 @@ export const getMyOrderById = async (req, res) => {
 };
 
 export const getAdminOrders = async (req, res) => {
+  // Admin listing endpoint with search + status/date/price filters.
   try {
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
     const limit = Math.max(parseInt(req.query.limit, 10) || 10, 1);

@@ -13,6 +13,11 @@ import notificationModel from "../models/NotificationModel.js";
 import userModel from "../models/user.js";
 import mongoose from "mongoose";
 
+// Task notes (Controller: instructor/provider):
+// - Serves instructor listing/profile pages.
+// - Aggregates profile tabs data (courses/resources/reviews/summary).
+// - Handles customer review write/delete with purchase validation.
+
 const DEFAULT_TITLES = [
   "Complete {topic} Masterclass",
   "{topic} Fundamentals for Beginners",
@@ -95,6 +100,7 @@ export const getProviderCourses = async (req, res) => {
 };
 
 export const getProviderProfileContent = async (req, res) => {
+  // Build a single payload for instructor tabs to reduce frontend round-trips.
   try {
     const { providerId } = req.params;
 
@@ -201,6 +207,7 @@ export const getProviderProfileContent = async (req, res) => {
 };
 
 export const createOrUpdateCourseReview = async (req, res) => {
+  // Customer can review only purchased courses.
   try {
     const { courseId } = req.params;
     const userId = req.user?.userId;
